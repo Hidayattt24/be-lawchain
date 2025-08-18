@@ -39,10 +39,18 @@ venv.bak/
 .env.production.local
 
 # Vector stores (model data yang besar)
-vector_store_faiss/
-vector_store_native/
+storage/vector_store_faiss/
+storage/vector_store_native/
 *.faiss
 *.pkl
+
+# Storage directory (except for .gitkeep)
+storage/*
+!storage/.gitkeep
+
+# Logs
+logs/
+*.log
 
 
 # Jupyter Notebook

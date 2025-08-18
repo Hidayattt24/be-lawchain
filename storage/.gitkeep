@@ -1,0 +1,2 @@
+# This file keeps the storage directory in git
+# Storage directory contains vector stores and other data files that are gitignored
