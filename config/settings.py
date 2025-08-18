@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     OLLAMA_LLM_MODEL: str = "llama3.1:8b"
     OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
     OLLAMA_TEMPERATURE: float = 0.1
-    OLLAMA_TIMEOUT: int = 120
+    OLLAMA_TIMEOUT: int = 300  # 5 minutes timeout for local LLM processing
     
     # Document Processing
     CHUNK_SIZE: int = 1000

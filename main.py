@@ -134,6 +134,10 @@ if __name__ == "__main__":
         "main:app",
         host=settings.HOST,
         port=settings.PORT,
-        reload=settings.DEBUG,
-        log_level=settings.LOG_LEVEL.lower()
+        reload=False,  # Disable auto-reload to prevent continuous restarts
+        log_level=settings.LOG_LEVEL.lower(),
+        timeout_keep_alive=300,  # 5 minutes for keep-alive
+        timeout_graceful_shutdown=300,  # 5 minutes for graceful shutdown
+        limit_max_requests=1000,  # Maximum number of requests
+        limit_concurrency=100  # Maximum concurrent connections
     )

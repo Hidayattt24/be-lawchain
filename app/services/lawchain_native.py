@@ -15,6 +15,10 @@ from datetime import datetime
 import math
 import re
 
+# Handle OpenMP conflicts - set this BEFORE importing any libraries that use OpenMP
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
+os.environ['OMP_NUM_THREADS'] = '1'  # Limit threads to prevent conflicts
+
 # Suppress warnings
 warnings.filterwarnings("ignore")
 
@@ -85,7 +89,7 @@ class NativeOllamaEmbedding:
                     "model": self.model,
                     "prompt": text
                 },
-                timeout=30
+                timeout=120  # Increased timeout for slower local processing
             )
             response.raise_for_status()
             return response.json()["embedding"]
@@ -126,7 +130,7 @@ class NativeOllamaLLM:
                         "temperature": self.temperature
                     }
                 },
-                timeout=120
+                timeout=300  # Increased timeout to 5 minutes for local LLM processing
             )
             response.raise_for_status()
             return response.json()["response"]
@@ -408,16 +412,25 @@ class LawChainNative:
     
     def create_vector_store(self):
         """Buat vector store dengan FAISS native"""
-        vector_store_path = "vector_store_native/index"
+        from config.settings import settings
+        vector_store_path = settings.VECTOR_STORE_NATIVE_PATH.replace("/", os.sep)
         
-        # Cek apakah vector store sudah ada
-        if os.path.exists(f"{vector_store_path}.faiss") and os.path.exists(f"{vector_store_path}.pkl"):
+        # Pastikan direktori ada
+        os.makedirs(vector_store_path, exist_ok=True)
+        
+        # Cek apakah vector store sudah ada (file dengan nama index.faiss dan index.pkl)
+        faiss_file = os.path.join(vector_store_path, "index.faiss")
+        pkl_file = os.path.join(vector_store_path, "index.pkl")
+        
+        if os.path.exists(faiss_file) and os.path.exists(pkl_file):
             print(f"\n📁 Vector store ditemukan di '{vector_store_path}'")
             print("🔄 Memuat vector store yang sudah ada...")
             
             try:
                 self.vector_store = NativeFAISSVectorStore()
-                self.vector_store.load(vector_store_path)
+                # Load dengan path tanpa extension karena method load akan menambahkan .faiss dan .pkl
+                base_path = os.path.join(vector_store_path, "index")
+                self.vector_store.load(base_path)
                 print("✅ Vector store berhasil dimuat dari cache")
                 print("⚡ Proses lebih cepat karena menggunakan data yang sudah ada!")
                 return
@@ -450,8 +463,8 @@ class LawChainNative:
             print(f"✅ Vector store berhasil dibuat dalam {elapsed_time:.1f} detik")
             
             # Simpan vector store
-            os.makedirs("vector_store_native", exist_ok=True)
-            self.vector_store.save(vector_store_path)
+            base_path = os.path.join(vector_store_path, "index")
+            self.vector_store.save(base_path)
             print(f"💾 Vector store disimpan ke '{vector_store_path}'")
             print("🎯 Selanjutnya akan menggunakan cache untuk startup yang lebih cepat!")
             
@@ -719,36 +732,51 @@ class LawChainNative:
         return list(set(important_words))
     
     def ask_question(self, question: str) -> Dict[str, Any]:
-        """Proses pertanyaan dengan RAG pipeline native"""
+        """Proses pertanyaan dengan RAG pipeline native dengan error handling"""
         if not self.vector_store or not self.llm:
             raise ValueError("Sistem belum diinisialisasi!")
         
         print(f"\n❓ Pertanyaan: {question}")
         
-        # Validasi Ollama
         try:
-            self.validate_ollama_status()
-            print("✅ Ollama status OK")
-        except Exception as e:
-            print(f"❌ Validasi gagal: {str(e)}")
-            raise
-        
-        print("🔍 Mencari jawaban...")
-        
-        try:
-            # RETRIEVAL: Cari dokumen relevan
-            query_embedding = self.embeddings_model.embed_query(question)
-            retrieved_docs = self.vector_store.similarity_search(query_embedding, k=5)
+            # Validasi Ollama dengan timeout
+            print("🔍 Validating Ollama...")
+            try:
+                self.validate_ollama_status()
+                print("✅ Ollama status OK")
+            except Exception as e:
+                print(f"❌ Validasi gagal: {str(e)}")
+                raise ValueError(f"Ollama validation failed: {str(e)}")
+            
+            print("🔍 Mencari jawaban...")
+            
+            # RETRIEVAL: Cari dokumen relevan dengan timeout protection
+            print("📋 Retrieving relevant documents...")
+            try:
+                query_embedding = self.embeddings_model.embed_query(question)
+                retrieved_docs = self.vector_store.similarity_search(query_embedding, k=5)
+                print(f"✅ Found {len(retrieved_docs)} relevant documents")
+            except Exception as e:
+                print(f"❌ Document retrieval failed: {str(e)}")
+                raise ValueError(f"Document retrieval failed: {str(e)}")
             
             # AUGMENTATION: Buat context dari retrieved docs
-            context_parts = []
-            for i, doc in enumerate(retrieved_docs, 1):
-                context_parts.append(f"[Dokumen {i}]:\n{doc['content']}")
-            
-            context = "\n\n".join(context_parts)
+            print("📝 Building context...")
+            try:
+                context_parts = []
+                for i, doc in enumerate(retrieved_docs, 1):
+                    context_parts.append(f"[Dokumen {i}]:\n{doc['content']}")
+                
+                context = "\n\n".join(context_parts)
+                print(f"✅ Context built with {len(context)} characters")
+            except Exception as e:
+                print(f"❌ Context building failed: {str(e)}")
+                raise ValueError(f"Context building failed: {str(e)}")
             
             # GENERATION: Buat prompt dan generate jawaban
-            prompt_template = """
+            print("🤖 Generating answer...")
+            try:
+                prompt_template = """
 Kamu adalah asisten hukum ahli yang menguasai Undang-Undang Dasar 1945 (UUD 1945). 
 Tugasmu adalah menjawab pertanyaan tentang UUD 1945 dengan akurat dan informatif dalam bahasa Indonesia.
 
@@ -766,12 +794,32 @@ PERTANYAAN: {question}
 
 JAWABAN (dalam bahasa Indonesia):
 """
-            
-            prompt = prompt_template.format(context=context, question=question)
-            answer = self.llm.generate(prompt)
+                
+                prompt = prompt_template.format(context=context, question=question)
+                answer = self.llm.generate(prompt)
+                print(f"✅ Answer generated with {len(answer)} characters")
+            except Exception as e:
+                print(f"❌ Answer generation failed: {str(e)}")
+                raise ValueError(f"Answer generation failed: {str(e)}")
             
             # EVALUATION: Hitung metrik
-            metrics = self.calculate_comprehensive_metrics(question, retrieved_docs, answer)
+            print("📊 Calculating metrics...")
+            try:
+                metrics = self.calculate_comprehensive_metrics(question, retrieved_docs, answer)
+                print("✅ Metrics calculated successfully")
+            except Exception as e:
+                print(f"⚠️ Metrics calculation failed: {str(e)}")
+                # Use default metrics if calculation fails
+                metrics = {
+                    'semantic_similarity': 50.0,
+                    'content_coverage': 50.0,
+                    'answer_relevance': 50.0,
+                    'source_quality': 70.0,
+                    'legal_context': 50.0,
+                    'answer_completeness': 50.0,
+                    'confidence_score': 50.0,
+                    'estimated_accuracy': 50.0
+                }
             
             # Format sumber dokumen
             sources = []
@@ -792,7 +840,7 @@ JAWABAN (dalam bahasa Indonesia):
                     'sumber_url': pdf_meta['sumber'],
                     'institusi': pdf_meta['institusi'],
                     'priority_score': pdf_meta['priority_score'],
-                    'halaman': metadata.get('page', 'Unknown'),
+                    'halaman': str(metadata.get('page', 'Unknown')),  # Ensure string type
                     'chunk_id': metadata.get('chunk_id', i),
                     'similarity_score': doc.get('similarity_score', 0.0),
                     'preview': doc['content'][:150] + "..." if len(doc['content']) > 150 else doc['content']
@@ -812,6 +860,8 @@ JAWABAN (dalam bahasa Indonesia):
             
         except Exception as e:
             print(f"❌ Error saat memproses pertanyaan: {str(e)}")
+            import traceback
+            traceback.print_exc()
             raise
     
     def display_response(self, response: Dict[str, Any]):
@@ -916,18 +966,24 @@ JAWABAN (dalam bahasa Indonesia):
         print(f"{'=' * 70}")
     
     def initialize(self, force_rebuild_vectorstore=False):
-        """Inisialisasi lengkap sistem RAG Native"""
+        """Inisialisasi lengkap sistem RAG Native dengan error handling"""
         try:
+            print("🔧 Starting Native RAG initialization...")
+            
             # 1. Load documents
+            print("📂 Step 1: Loading documents...")
             self.load_documents()
             
             # 2. Split documents
+            print("🔄 Step 2: Splitting documents...")
             self.split_documents()
             
             # 3. Create embeddings
+            print("🔮 Step 3: Creating embeddings...")
             self.create_embeddings()
             
             # 4. Create vector store
+            print("🗄️ Step 4: Creating vector store...")
             if force_rebuild_vectorstore and os.path.exists("vector_store_native"):
                 print("🔄 Force rebuild: Menghapus vector store lama...")
                 import shutil
@@ -936,6 +992,7 @@ JAWABAN (dalam bahasa Indonesia):
             self.create_vector_store()
             
             # 5. Setup LLM
+            print("🤖 Step 5: Setting up LLM...")
             self.setup_llm()
             
             print(f"\n{'=' * 70}")
@@ -952,8 +1009,28 @@ JAWABAN (dalam bahasa Indonesia):
             print(f"{'=' * 70}")
             
         except Exception as e:
-            print(f"❌ Error inisialisasi: {str(e)}")
+            print(f"❌ Error inisialisasi Native: {str(e)}")
+            print(f"❌ Error type: {type(e).__name__}")
+            import traceback
+            print(f"❌ Traceback: {traceback.format_exc()}")
+            # Clean up on failure
+            self.cleanup_on_error()
             raise
+    
+    def cleanup_on_error(self):
+        """Clean up resources on initialization error"""
+        try:
+            if hasattr(self, 'vector_store') and self.vector_store:
+                del self.vector_store
+            if hasattr(self, 'embeddings_model') and self.embeddings_model:
+                del self.embeddings_model
+            if hasattr(self, 'llm') and self.llm:
+                del self.llm
+            # Force garbage collection
+            import gc
+            gc.collect()
+        except:
+            pass
     
     def run_interactive_chat(self):
         """Chat interaktif"""

@@ -33,9 +33,9 @@ class SourceDocument(BaseModel):
     sumber_url: str = Field(..., description="Source URL")
     institusi: str = Field(..., description="Institution")
     priority_score: int = Field(..., description="Priority score")
-    halaman: str = Field(..., description="Page number")
+    halaman: str = Field(..., description="Page number")  # Must be string
     chunk_id: int = Field(..., description="Chunk ID")
-    similarity_score: float = Field(..., description="Similarity score")
+    similarity_score: float = Field(..., description="Similarity score")  # Required field
     preview: str = Field(..., description="Content preview")
 
 

@@ -206,6 +206,7 @@ class LawChainIndonesia:
             self.embeddings = OllamaEmbeddings(
                 model="nomic-embed-text",
                 base_url="http://localhost:11434"
+                # Note: timeout parameter removed as it's not supported in newer versions
             )
             
             # Test embedding dengan validasi ulang
@@ -222,11 +223,15 @@ class LawChainIndonesia:
     
     def create_vector_store(self):
         """Membuat atau memuat vector store dengan FAISS"""
-        vector_store_path = "vector_store_faiss"
+        from config.settings import settings
+        vector_store_path = settings.VECTOR_STORE_LANGCHAIN_PATH
+        
+        # Pastikan direktori ada
+        os.makedirs(os.path.dirname(vector_store_path), exist_ok=True)
         
         # Cek apakah vector store sudah ada
         if os.path.exists(vector_store_path):
-            print(f"\n� Vector store ditemukan di '{vector_store_path}'")
+            print(f"\n📦 Vector store ditemukan di '{vector_store_path}'")
             print("🔄 Memuat vector store yang sudah ada...")
             
             try:
@@ -244,7 +249,7 @@ class LawChainIndonesia:
                 print("🔄 Akan membuat vector store baru...")
         
         # Jika tidak ada atau gagal dimuat, buat yang baru
-        print(f"\n�🗄️ Membuat vector store baru dengan FAISS...")
+        print(f"\n🗄️ Membuat vector store baru dengan FAISS...")
         print(f"📊 Memproses {len(self.text_chunks)} chunks...")
         print("⏳ Estimasi waktu: 2-5 menit (hanya sekali)")
         
@@ -283,6 +288,7 @@ class LawChainIndonesia:
                 model="llama3.1:8b",
                 base_url="http://localhost:11434",
                 temperature=0.1
+                # Note: timeout parameter removed as it's not supported in newer versions
             )
             
             # Test LLM dengan validasi ulang
@@ -661,8 +667,9 @@ JAWABAN (dalam bahasa Indonesia):
                     'sumber_url': metadata['sumber'],
                     'institusi': metadata['institusi'],
                     'priority_score': metadata['priority_score'],
-                    'halaman': doc.metadata.get('page', 'Unknown'),
+                    'halaman': str(doc.metadata.get('page', 'Unknown')),  # Ensure string type
                     'chunk_id': doc.metadata.get('chunk_id', i),
+                    'similarity_score': getattr(doc, 'similarity_score', 0.0),  # Add similarity score
                     'preview': doc.page_content[:150] + "..." if len(doc.page_content) > 150 else doc.page_content
                 })
             

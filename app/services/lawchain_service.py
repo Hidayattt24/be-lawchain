@@ -24,13 +24,33 @@ class LawChainService:
             'native': False
         }
     
+    def check_vector_stores_exist(self):
+        """Check if vector stores already exist"""
+        from config.settings import settings
+        import os
+        
+        langchain_exists = os.path.exists(os.path.join(settings.VECTOR_STORE_LANGCHAIN_PATH, "index.faiss"))
+        native_exists = os.path.exists(os.path.join(settings.VECTOR_STORE_NATIVE_PATH, "index.faiss")) and \
+                       os.path.exists(os.path.join(settings.VECTOR_STORE_NATIVE_PATH, "index.pkl"))
+        
+        return {
+            'langchain': langchain_exists,
+            'native': native_exists
+        }
+    
     def initialize_langchain(self, force_rebuild: bool = False):
         """Initialize LangChain implementation"""
         try:
             logger.info("Initializing LangChain implementation...")
             
+            # Check if vector store exists to avoid unnecessary rebuild
+            if not force_rebuild:
+                stores = self.check_vector_stores_exist()
+                if stores['langchain']:
+                    logger.info("LangChain vector store found, using existing data...")
+            
             # Import dan inisialisasi LangChain implementation
-            from lawchain_indonesia import LawChainIndonesia
+            from .lawchain_indonesia import LawChainIndonesia
             
             self.langchain_instance = LawChainIndonesia()
             self.langchain_instance.initialize(force_rebuild_vectorstore=force_rebuild)
@@ -44,14 +64,28 @@ class LawChainService:
             raise
     
     def initialize_native(self, force_rebuild: bool = False):
-        """Initialize Native implementation"""
+        """Initialize Native implementation with OpenMP error handling"""
         try:
             logger.info("Initializing Native implementation...")
             
-            # Import dan inisialisasi Native implementation
-            from lawchain_native import LawChainNative
+            # Handle OpenMP conflict
+            import os
+            os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
+            logger.info("Set KMP_DUPLICATE_LIB_OK=TRUE to handle OpenMP conflicts")
             
+            # Check if vector store exists to avoid unnecessary rebuild
+            if not force_rebuild:
+                stores = self.check_vector_stores_exist()
+                if stores['native']:
+                    logger.info("Native vector store found, using existing data...")
+            
+            # Import dan inisialisasi Native implementation
+            from .lawchain_native import LawChainNative
+            
+            logger.info("Creating Native instance...")
             self.native_instance = LawChainNative()
+            
+            logger.info("Starting Native initialization...")
             self.native_instance.initialize(force_rebuild_vectorstore=force_rebuild)
             
             self.initialization_status['native'] = True
@@ -59,6 +93,9 @@ class LawChainService:
             
         except Exception as e:
             logger.error(f"Failed to initialize Native implementation: {str(e)}")
+            logger.error(f"Error type: {type(e).__name__}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
             self.initialization_status['native'] = False
             raise
     
@@ -93,17 +130,40 @@ class LawChainService:
                 
             elif method == "native":
                 if not self.initialization_status['native'] or not self.native_instance:
-                    raise ValueError("Native implementation not initialized")
+                    logger.error("Native implementation not initialized, attempting initialization...")
+                    try:
+                        self.initialize_native()
+                    except Exception as init_error:
+                        logger.error(f"Failed to initialize Native during ask: {str(init_error)}")
+                        raise ValueError(f"Native implementation not available: {str(init_error)}")
                 
                 logger.info(f"Processing question with Native: {question[:50]}...")
-                response = self.native_instance.ask_question(question)
+                try:
+                    response = self.native_instance.ask_question(question)
+                except Exception as native_error:
+                    logger.error(f"Native processing failed: {str(native_error)}")
+                    logger.error(f"Error type: {type(native_error).__name__}")
+                    import traceback
+                    logger.error(f"Traceback: {traceback.format_exc()}")
+                    raise
                 
             else:
                 raise ValueError(f"Unsupported method: {method}")
             
-            # Add processing time
+            # Ensure required fields are present and correct format
+            response['method'] = method  # Add missing method field
             response['processing_time'] = format_processing_time(start_time)
             response['success'] = True
+            
+            # Fix source documents format
+            if 'sumber_dokumen' in response:
+                for doc in response['sumber_dokumen']:
+                    # Ensure halaman is string
+                    if 'halaman' in doc and isinstance(doc['halaman'], int):
+                        doc['halaman'] = str(doc['halaman'])
+                    # Ensure similarity_score exists
+                    if 'similarity_score' not in doc:
+                        doc['similarity_score'] = 0.0
             
             logger.info(f"Question processed successfully in {response['processing_time']}s")
             return response
