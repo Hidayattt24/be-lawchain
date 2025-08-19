@@ -136,8 +136,8 @@ if __name__ == "__main__":
         port=settings.PORT,
         reload=False,  # Disable auto-reload to prevent continuous restarts
         log_level=settings.LOG_LEVEL.lower(),
-        timeout_keep_alive=300,  # 5 minutes for keep-alive
-        timeout_graceful_shutdown=300,  # 5 minutes for graceful shutdown
+        timeout_keep_alive=600,  # Increased to 10 minutes for keep-alive
+        timeout_graceful_shutdown=600,  # Increased to 10 minutes for graceful shutdown
         limit_max_requests=1000,  # Maximum number of requests
-        limit_concurrency=100  # Maximum concurrent connections
+        limit_concurrency=50    # Reduced concurrency to improve per-request performance
     )
