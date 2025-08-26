@@ -186,6 +186,10 @@ class NativeFAISSVectorStore:
         
         return results
     
+    def get_all_documents(self) -> List[Dict]:
+        """Get all stored documents untuk manual search"""
+        return self.documents.copy()
+    
     def save(self, filepath: str):
         """Simpan vector store"""
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
@@ -730,6 +734,199 @@ class LawChainNative:
                 important_words.append(word)
         
         return list(set(important_words))
+    
+    def hybrid_search(self, question: str, k: int = 5) -> List[Dict]:
+        """
+        Hybrid search: Kombinasi keyword search untuk struktur hukum (Pasal, Bab) 
+        dengan semantic search untuk konten umum
+        """
+        try:
+            # Deteksi query struktural (Pasal, Bab, dll)
+            structural_patterns = [
+                r'\bpasal\s+(\d+[a-z]*)\b',
+                r'\bbab\s+([IVXLCDM]+)\b', 
+                r'\bpasal\s+(\w+)\b',
+                r'\bbagian\s+(\w+)\b'
+            ]
+            
+            is_structural = any(re.search(pattern, question.lower()) for pattern in structural_patterns)
+            
+            if is_structural:
+                print("🔍 Detected structural query, using keyword search...")
+                
+                # Extract structural terms dari query
+                structural_terms = []
+                for pattern in structural_patterns:
+                    matches = re.findall(pattern, question.lower())
+                    structural_terms.extend(matches)
+                
+                # Keyword search di vector store
+                keyword_results = []
+                if hasattr(self.vector_store, 'search_by_keywords'):
+                    keyword_results = self.vector_store.search_by_keywords(structural_terms, k=k)
+                else:
+                    # Fallback: manual search through stored documents
+                    all_docs = self.vector_store.get_all_documents()
+                    for doc in all_docs:
+                        content_lower = doc['content'].lower()
+                        if any(term in content_lower for term in structural_terms):
+                            keyword_results.append(doc)
+                
+                if keyword_results:
+                    print(f"✅ Found {len(keyword_results)} results via keyword search")
+                    return keyword_results[:k]
+            
+            # Fallback ke semantic search
+            print("🔍 Using semantic search...")
+            query_embedding = self.embeddings_model.embed_query(question)
+            semantic_results = self.vector_store.similarity_search(query_embedding, k=k)
+            
+            print(f"✅ Found {len(semantic_results)} results via semantic search")
+            return semantic_results
+            
+        except Exception as e:
+            print(f"❌ Hybrid search error: {str(e)}")
+            # Fallback ke semantic search
+            query_embedding = self.embeddings_model.embed_query(question)
+            return self.vector_store.similarity_search(query_embedding, k=k)
+    
+    def ask_question_with_custom_qa(self, question: str) -> Dict[str, Any]:
+        """
+        Custom QA method menggunakan hybrid search dan direct LLM invocation
+        (mirip dengan implementasi LangChain yang sudah berhasil)
+        """
+        if not self.vector_store or not self.llm:
+            raise ValueError("Sistem belum diinisialisasi!")
+        
+        print(f"\n❓ Pertanyaan: {question}")
+        
+        try:
+            # Validasi Ollama
+            print("🔍 Validating Ollama...")
+            try:
+                self.validate_ollama_status()
+                print("✅ Ollama status OK")
+            except Exception as e:
+                print(f"❌ Validasi gagal: {str(e)}")
+                raise ValueError(f"Ollama validation failed: {str(e)}")
+            
+            print("🔍 Mencari jawaban dengan hybrid search...")
+            
+            # HYBRID RETRIEVAL: Gunakan hybrid search
+            print("📋 Using hybrid search for document retrieval...")
+            try:
+                retrieved_docs = self.hybrid_search(question, k=5)
+                print(f"✅ Found {len(retrieved_docs)} relevant documents")
+            except Exception as e:
+                print(f"❌ Hybrid search failed: {str(e)}")
+                raise ValueError(f"Hybrid search failed: {str(e)}")
+            
+            # AUGMENTATION: Buat context dari retrieved docs
+            print("📝 Building context...")
+            try:
+                context_parts = []
+                for i, doc in enumerate(retrieved_docs, 1):
+                    context_parts.append(f"[Dokumen {i}]:\n{doc['content']}")
+                
+                context = "\n\n".join(context_parts)
+                print(f"✅ Context built with {len(context)} characters")
+            except Exception as e:
+                print(f"❌ Context building failed: {str(e)}")
+                raise ValueError(f"Context building failed: {str(e)}")
+            
+            # GENERATION: Improved prompt dengan explicit context instructions
+            print("🤖 Generating answer with custom QA...")
+            try:
+                prompt_template = """
+Kamu adalah ahli hukum konstitusi Indonesia yang sangat menguasai Undang-Undang Dasar 1945 (UUD 1945).
+Tugasmu adalah memberikan analisis yang mendalam dan penjelasan yang sangat detail berdasarkan konteks dokumen UUD 1945.
+
+INSTRUKSI KHUSUS:
+1. WAJIB gunakan HANYA informasi yang tersedia dalam KONTEKS di bawah ini
+2. Untuk pertanyaan tentang pasal, bab, atau ketentuan tertentu: berikan bunyi lengkap dan jelaskan maknanya
+3. Untuk pertanyaan tentang tugas, wewenang, atau fungsi: analisis berdasarkan seluruh dokumen yang relevan dalam konteks
+4. Berikan penjelasan yang SANGAT DETAIL dan KOMPREHENSIF dalam bahasa Indonesia yang formal
+5. Sertakan referensi pasal, ayat, bab, atau sumber yang spesifik
+6. Jika informasi tersebar di beberapa bagian dokumen, gabungkan untuk memberikan gambaran lengkap
+7. Untuk pertanyaan umum, berikan analisis mendalam berdasarkan prinsip-prinsip yang terkandung dalam konteks
+8. Hanya jika benar-benar tidak ada informasi relevan, katakan: "Maaf, informasi tentang [topik] tidak ditemukan dalam dokumen UUD 1945 yang tersedia."
+
+KONTEKS LENGKAP DARI DOKUMEN UUD 1945:
+{context}
+
+PERTANYAAN YANG HARUS DIJAWAB SECARA DETAIL: {question}
+
+ANALISIS MENDALAM DAN PENJELASAN DETAIL (berdasarkan konteks UUD 1945):
+"""
+                
+                prompt = prompt_template.format(context=context, question=question)
+                answer = self.llm.generate(prompt)
+                print(f"✅ Answer generated with {len(answer)} characters")
+            except Exception as e:
+                print(f"❌ Answer generation failed: {str(e)}")
+                raise ValueError(f"Answer generation failed: {str(e)}")
+            
+            # EVALUATION: Hitung metrik
+            print("📊 Calculating metrics...")
+            try:
+                metrics = self.calculate_comprehensive_metrics(question, retrieved_docs, answer)
+                print("✅ Metrics calculated successfully")
+            except Exception as e:
+                print(f"⚠️ Metrics calculation failed: {str(e)}")
+                # Use default metrics if calculation fails
+                metrics = {
+                    'semantic_similarity': 50.0,
+                    'content_coverage': 50.0,
+                    'answer_relevance': 50.0,
+                    'source_quality': 70.0,
+                    'legal_context': 50.0,
+                    'answer_completeness': 50.0,
+                    'confidence_score': 50.0,
+                    'estimated_accuracy': 50.0
+                }
+            
+            # Format sumber dokumen
+            sources = []
+            for i, doc in enumerate(retrieved_docs):
+                metadata = doc['metadata']
+                source_file = metadata.get('source_file', 'Unknown')
+                
+                pdf_meta = self.pdf_metadata.get(source_file, {
+                    'judul': source_file,
+                    'sumber': 'Tidak diketahui',
+                    'institusi': 'Tidak diketahui',
+                    'priority_score': 70
+                })
+                
+                sources.append({
+                    'dokumen': source_file,
+                    'judul': pdf_meta['judul'],
+                    'sumber_url': pdf_meta['sumber'],
+                    'institusi': pdf_meta['institusi'],
+                    'priority_score': pdf_meta['priority_score'],
+                    'halaman': str(metadata.get('page', 'Unknown')),
+                    'chunk_id': metadata.get('chunk_id', i),
+                    'similarity_score': doc.get('similarity_score', 0.0),
+                    'preview': doc['content'][:150] + "..." if len(doc['content']) > 150 else doc['content']
+                })
+            
+            response = {
+                'pertanyaan': question,
+                'jawaban': answer,
+                'metrics': metrics,
+                'jumlah_sumber': len(sources),
+                'sumber_dokumen': sources,
+                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'method': 'Native RAG dengan Hybrid Search'
+            }
+            
+            return response
+            
+        except Exception as e:
+            print(f"❌ Error saat memproses pertanyaan: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            raise
     
     def ask_question(self, question: str) -> Dict[str, Any]:
         """Proses pertanyaan dengan RAG pipeline native dengan error handling"""

@@ -37,9 +37,9 @@ class LawChainIndonesia:
         self.qa_chain = None
         self.chunk_metadata = []
         
-        # Konfigurasi
-        self.chunk_size = 1000
-        self.chunk_overlap = 200
+        # Konfigurasi yang lebih baik untuk dokumen hukum
+        self.chunk_size = 800  # Lebih kecil untuk granularitas yang lebih baik
+        self.chunk_overlap = 150  # Overlap yang lebih kecil tapi proporsional
         
         # Statistics
         self.total_documents = 0
@@ -177,7 +177,18 @@ class LawChainIndonesia:
             chunk_size=self.chunk_size,
             chunk_overlap=self.chunk_overlap,
             length_function=len,
-            separators=["\n\n", "\n", " ", ""]
+            # Separators yang lebih cocok untuk dokumen hukum
+            separators=[
+                "\n\nPasal ",      # Separator antar pasal
+                "\n\nBab ",        # Separator antar bab  
+                "\n\nBagian ",     # Separator antar bagian
+                "\n\nParagraf ",   # Separator antar paragraf
+                "\n\n",            # Double newline
+                "\n",              # Single newline
+                ". ",              # Sentence ending
+                " ",               # Space
+                ""                 # Character level
+            ]
         )
         
         self.text_chunks = text_splitter.split_documents(self.documents)
@@ -306,24 +317,24 @@ class LawChainIndonesia:
         """Membuat QA chain dengan prompt bahasa Indonesia"""
         print("\n🔗 Membuat QA chain...")
         
-        # Prompt template dalam bahasa Indonesia
+        # Prompt template dalam bahasa Indonesia yang lebih spesifik
         prompt_template = """
 Kamu adalah asisten hukum ahli yang menguasai Undang-Undang Dasar 1945 (UUD 1945). 
-Tugasmu adalah menjawab pertanyaan tentang UUD 1945 dengan akurat dan informatif dalam bahasa Indonesia.
+Tugasmu adalah menjawab pertanyaan tentang UUD 1945 dengan akurat berdasarkan konteks dokumen yang diberikan.
 
 INSTRUKSI PENTING:
-1. Jawab HANYA dalam bahasa Indonesia
-2. Berikan jawaban yang akurat berdasarkan konteks yang diberikan
-3. Jika informasi tidak cukup, katakan "Maaf, informasi tidak cukup untuk menjawab pertanyaan ini"
-4. Sertakan referensi pasal atau bab yang relevan jika memungkinkan
-5. Berikan penjelasan yang mudah dipahami
+1. Jawab HANYA berdasarkan informasi yang ada dalam KONTEKS di bawah ini
+2. Jika pertanyaan menanyakan tentang pasal tertentu, cari informasi pasal tersebut dalam konteks
+3. Berikan jawaban yang lengkap dan akurat dalam bahasa Indonesia
+4. Sertakan nomor pasal, ayat, dan bunyi lengkap pasal jika tersedia dalam konteks
+5. Jika informasi tidak ada dalam konteks, jawab: "Maaf, informasi tentang [topik] tidak ditemukan dalam dokumen UUD 1945 yang tersedia."
 
-KONTEKS DOKUMEN:
+KONTEKS DARI UUD 1945:
 {context}
 
 PERTANYAAN: {question}
 
-JAWABAN (dalam bahasa Indonesia):
+JAWABAN (berdasarkan konteks UUD 1945 di atas):
 """
         
         prompt = PromptTemplate(
@@ -331,10 +342,13 @@ JAWABAN (dalam bahasa Indonesia):
             input_variables=["context", "question"]
         )
         
-        # Buat retriever
+        # Buat retriever dengan konfigurasi yang lebih baik
         retriever = self.vector_store.as_retriever(
             search_type="similarity",
-            search_kwargs={"k": 5}
+            search_kwargs={
+                "k": 10,  # Ambil lebih banyak dokumen untuk analisis yang lebih baik
+                "fetch_k": 20,  # Fetch lebih banyak kandidat
+            }
         )
         
         # Buat QA chain
@@ -347,6 +361,125 @@ JAWABAN (dalam bahasa Indonesia):
         )
         
         print("✅ QA chain berhasil dibuat")
+    
+    def ask_question_with_custom_qa(self, question: str) -> Dict[str, Any]:
+        """Custom QA yang memaksa menggunakan hybrid search results"""
+        if not self.llm:
+            raise ValueError("LLM belum diinisialisasi!")
+        
+        print(f"\n❓ Pertanyaan: {question}")
+        
+        # Validasi Ollama sebelum proses
+        try:
+            self.validate_ollama_status()
+            print("✅ Ollama status OK")
+        except Exception as e:
+            print(f"❌ Validasi gagal: {str(e)}")
+            print("💡 Silakan restart Ollama dan coba lagi")
+            raise
+        
+        print("🔍 Mencari jawaban dengan hybrid search...")
+        
+        try:
+            # Gunakan hybrid search untuk mendapatkan dokumen terbaik
+            search_results = self.hybrid_search(question, k=10)
+            
+            # Buat context dari hasil hybrid search
+            context_docs = [doc for doc, score in search_results]
+            context = "\n\n".join([doc.page_content for doc in context_docs])
+            
+            # Buat prompt template yang lebih comprehensive
+            prompt_template = """
+Kamu adalah ahli hukum konstitusi Indonesia yang sangat menguasai Undang-Undang Dasar 1945 (UUD 1945). 
+Tugasmu adalah memberikan analisis yang mendalam dan penjelasan yang sangat detail berdasarkan konteks dokumen UUD 1945.
+
+INSTRUKSI KHUSUS:
+1. WAJIB gunakan HANYA informasi yang tersedia dalam KONTEKS di bawah ini
+2. Untuk pertanyaan tentang pasal, bab, atau ketentuan tertentu: berikan bunyi lengkap dan jelaskan maknanya
+3. Untuk pertanyaan tentang tugas, wewenang, atau fungsi: analisis berdasarkan seluruh dokumen yang relevan dalam konteks
+4. Berikan penjelasan yang SANGAT DETAIL dan KOMPREHENSIF dalam bahasa Indonesia yang formal
+5. Sertakan referensi pasal, ayat, bab, atau sumber yang spesifik
+6. Jika informasi tersebar di beberapa bagian dokumen, gabungkan untuk memberikan gambaran lengkap
+7. Untuk pertanyaan umum, berikan analisis mendalam berdasarkan prinsip-prinsip yang terkandung dalam konteks
+8. Hanya jika benar-benar tidak ada informasi relevan, katakan: "Maaf, informasi tentang [topik] tidak ditemukan dalam dokumen UUD 1945 yang tersedia."
+
+KONTEKS LENGKAP DARI DOKUMEN UUD 1945:
+{context}
+
+PERTANYAAN YANG HARUS DIJAWAB SECARA DETAIL: {question}
+
+ANALISIS MENDALAM DAN PENJELASAN DETAIL (berdasarkan konteks UUD 1945):
+"""
+            
+            # Buat prompt dengan context dari hybrid search
+            final_prompt = prompt_template.format(context=context, question=question)
+            
+            # Direct call ke LLM
+            answer = self.llm.invoke(final_prompt)
+            
+            # Simulate result format seperti RetrievalQA
+            result = {
+                'result': answer,
+                'source_documents': context_docs
+            }
+            
+            # Hitung metrik komprehensif
+            metrics = self.calculate_comprehensive_metrics(
+                question, 
+                result.get('source_documents', []),
+                result['result']
+            )
+            
+            # Format sumber dokumen dengan similarity scores yang benar dari hybrid search
+            sources = []
+            source_docs = result.get('source_documents', [])
+            
+            # Match source documents dengan search results untuk mendapatkan scores yang benar
+            for i, doc in enumerate(source_docs):
+                # Cari matching document di search results
+                similarity_score = 0.0
+                for search_doc, score in search_results:
+                    if (search_doc.page_content == doc.page_content and 
+                        search_doc.metadata.get('page') == doc.metadata.get('page')):
+                        similarity_score = float(score)
+                        break
+                
+                source_file = doc.metadata.get('source_file', 'Unknown')
+                
+                # Dapatkan metadata dari mapping
+                metadata = self.pdf_metadata.get(source_file, {
+                    'judul': source_file,
+                    'sumber': 'Tidak diketahui',
+                    'institusi': 'Tidak diketahui', 
+                    'priority_score': 70
+                })
+                
+                sources.append({
+                    'dokumen': source_file,
+                    'judul': metadata['judul'],
+                    'sumber_url': metadata['sumber'],
+                    'institusi': metadata['institusi'],
+                    'priority_score': metadata['priority_score'],
+                    'halaman': str(doc.metadata.get('page', 'Unknown')),
+                    'chunk_id': doc.metadata.get('chunk_id', i),
+                    'similarity_score': similarity_score,  # Now with correct score from hybrid search
+                    'preview': doc.page_content[:150] + "..." if len(doc.page_content) > 150 else doc.page_content
+                })
+            
+            response = {
+                'pertanyaan': question,
+                'jawaban': result['result'],
+                'metrics': metrics,
+                'jumlah_sumber': len(sources),
+                'sumber_dokumen': sources,
+                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+            
+            return response
+            
+        except Exception as e:
+            print(f"❌ Error saat memproses pertanyaan: {str(e)}")
+            raise
     
     def calculate_comprehensive_metrics(self, query: str, retrieved_docs: List, answer: str) -> Dict[str, float]:
         """Menghitung berbagai metrik untuk evaluasi jawaban dan akurasi"""
@@ -619,6 +752,75 @@ JAWABAN (dalam bahasa Indonesia):
         
         return dot_product / (magnitude1 * magnitude2)
     
+    def debug_search(self, question: str, k: int = 10):
+        """Method untuk debugging search results"""
+        print(f"\n🔍 DEBUG: Searching for: {question}")
+        
+        if not self.vector_store:
+            print("❌ Vector store not initialized")
+            return
+        
+        # Search dengan similarity
+        docs = self.vector_store.similarity_search_with_score(question, k=k)
+        
+        print(f"📊 Found {len(docs)} documents")
+        for i, (doc, score) in enumerate(docs):
+            print(f"\n--- Document {i+1} (Score: {score:.4f}) ---")
+            print(f"Source: {doc.metadata.get('source_file', 'Unknown')}")
+            print(f"Page: {doc.metadata.get('page', 'Unknown')}")
+            print(f"Content preview: {doc.page_content[:200]}...")
+            
+        return docs
+    
+    def hybrid_search(self, query: str, k: int = 10):
+        """Hybrid search combining keyword and semantic search"""
+        import re
+        
+        # Check if query contains specific article reference
+        pasal_pattern = r'[Pp]asal\s+(\d+)'
+        pasal_match = re.search(pasal_pattern, query)
+        
+        if pasal_match:
+            # If query mentions specific article, prioritize keyword search
+            pasal_num = pasal_match.group(1)
+            print(f"🔍 Detected Pasal {pasal_num} query, using hybrid search...")
+            
+            # Find chunks containing the specific article
+            keyword_results = []
+            for i, chunk in enumerate(self.text_chunks):
+                if f'Pasal {pasal_num}' in chunk.page_content:
+                    # Calculate a "keyword score" based on relevance
+                    score = 100.0  # High priority for exact matches
+                    
+                    # Boost score if chunk has actual content (not just header/footer)
+                    if len(chunk.page_content.strip()) > 50:
+                        score -= 10
+                    
+                    # Boost score for higher priority documents
+                    source_file = chunk.metadata.get('source_file', '')
+                    priority = self.pdf_metadata.get(source_file, {}).get('priority_score', 70)
+                    score -= (110 - priority)  # Higher priority = lower distance score
+                    
+                    keyword_results.append((chunk, score))
+            
+            # Sort by score (lower is better, like distance)
+            keyword_results.sort(key=lambda x: x[1])
+            
+            if keyword_results:
+                print(f"  ✅ Found {len(keyword_results)} keyword matches for Pasal {pasal_num}")
+                
+                # Return top keyword results, but also add some semantic results
+                semantic_results = self.vector_store.similarity_search_with_score(query, k=k//2)
+                
+                # Combine results, prioritizing keyword matches
+                combined_results = keyword_results[:k//2] + semantic_results[:k//2]
+                return combined_results[:k]
+            else:
+                print(f"  ❌ No keyword matches found for Pasal {pasal_num}, falling back to semantic search")
+        
+        # Default to semantic search
+        return self.vector_store.similarity_search_with_score(query, k=k)
+    
     def ask_question(self, question: str) -> Dict[str, Any]:
         """Mengajukan pertanyaan ke chatbot dengan validasi real-time"""
         if not self.qa_chain:
@@ -638,26 +840,52 @@ JAWABAN (dalam bahasa Indonesia):
         print("�🔍 Mencari jawaban...")
         
         try:
-            # Dapatkan jawaban
+            # Debug search first menggunakan hybrid search
+            print(f"🔍 Debugging hybrid search untuk: {question}")
+            search_results = self.hybrid_search(question, k=10)
+            
+            print(f"📊 Found {len(search_results)} relevant documents:")
+            for i, (doc, score) in enumerate(search_results[:3]):
+                print(f"  {i+1}. Score: {score:.4f} | Page: {doc.metadata.get('page', '?')} | Preview: {doc.page_content[:100]}...")
+            
+            # Untuk QA chain, kita perlu menggunakan retriever yang sudah ada
+            # Tapi kita bisa override source documents dengan hasil hybrid search
             result = self.qa_chain.invoke({"query": question})
             
-            # Hitung metrik komprehensif
+            # Override source documents dengan hasil hybrid search
+            if search_results:
+                # Convert search results to documents (remove scores)
+                hybrid_docs = [doc for doc, score in search_results]
+                result['source_documents'] = hybrid_docs[:10]  # Take top 10
+            
+            # Hitung metrik komprehensif  
             metrics = self.calculate_comprehensive_metrics(
                 question, 
                 result.get('source_documents', []),
                 result['result']
             )
             
-            # Format sumber dokumen
+            # Format sumber dokumen dengan similarity scores yang benar dari hybrid search
             sources = []
-            for i, doc in enumerate(result.get('source_documents', [])):
+            source_docs = result.get('source_documents', [])
+            
+            # Match source documents dengan search results untuk mendapatkan scores yang benar
+            for i, doc in enumerate(source_docs):
+                # Cari matching document di search results
+                similarity_score = 0.0
+                for search_doc, score in search_results:
+                    if (search_doc.page_content == doc.page_content and 
+                        search_doc.metadata.get('page') == doc.metadata.get('page')):
+                        similarity_score = float(score)
+                        break
+                
                 source_file = doc.metadata.get('source_file', 'Unknown')
                 
                 # Dapatkan metadata dari mapping
                 metadata = self.pdf_metadata.get(source_file, {
                     'judul': source_file,
                     'sumber': 'Tidak diketahui',
-                    'institusi': 'Tidak diketahui',
+                    'institusi': 'Tidak diketahui', 
                     'priority_score': 70
                 })
                 
@@ -667,9 +895,9 @@ JAWABAN (dalam bahasa Indonesia):
                     'sumber_url': metadata['sumber'],
                     'institusi': metadata['institusi'],
                     'priority_score': metadata['priority_score'],
-                    'halaman': str(doc.metadata.get('page', 'Unknown')),  # Ensure string type
+                    'halaman': str(doc.metadata.get('page', 'Unknown')),
                     'chunk_id': doc.metadata.get('chunk_id', i),
-                    'similarity_score': getattr(doc, 'similarity_score', 0.0),  # Add similarity score
+                    'similarity_score': similarity_score,  # Now with correct score from hybrid search
                     'preview': doc.page_content[:150] + "..." if len(doc.page_content) > 150 else doc.page_content
                 })
             

@@ -23,6 +23,18 @@ class LawChainService:
             'langchain': False,
             'native': False
         }
+        
+        # Auto-initialize if vector stores exist
+        try:
+            stores = self.check_vector_stores_exist()
+            if stores['langchain']:
+                logger.info("Auto-initializing LangChain...")
+                self.initialize_langchain()
+            if stores['native']:
+                logger.info("Auto-initializing Native...")
+                self.initialize_native()
+        except Exception as e:
+            logger.warning(f"Auto-initialization failed: {str(e)}")
     
     def check_vector_stores_exist(self):
         """Check if vector stores already exist"""
@@ -126,7 +138,7 @@ class LawChainService:
                     raise ValueError("LangChain implementation not initialized")
                 
                 logger.info(f"Processing question with LangChain: {question[:50]}...")
-                response = self.langchain_instance.ask_question(question)
+                response = self.langchain_instance.ask_question_with_custom_qa(question)
                 
             elif method == "native":
                 if not self.initialization_status['native'] or not self.native_instance:
@@ -139,7 +151,7 @@ class LawChainService:
                 
                 logger.info(f"Processing question with Native: {question[:50]}...")
                 try:
-                    response = self.native_instance.ask_question(question)
+                    response = self.native_instance.ask_question_with_custom_qa(question)
                 except Exception as native_error:
                     logger.error(f"Native processing failed: {str(native_error)}")
                     logger.error(f"Error type: {type(native_error).__name__}")

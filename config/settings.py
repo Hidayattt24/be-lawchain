@@ -38,10 +38,10 @@ class Settings(BaseSettings):
     OLLAMA_TIMEOUT: int = 600  # Increased to 10 minutes for more reliable processing
     
     # Document Processing
-    CHUNK_SIZE: int = 1000
-    CHUNK_OVERLAP: int = 200
-    SIMILARITY_THRESHOLD: float = 0.7
-    MAX_RETRIEVED_DOCS: int = 5
+    CHUNK_SIZE: int = 800  # Reduced for better granularity in legal documents
+    CHUNK_OVERLAP: int = 150  # Reduced proportionally
+    SIMILARITY_THRESHOLD: float = 0.3  # Lower threshold for better recall
+    MAX_RETRIEVED_DOCS: int = 10  # Increased for better coverage
     
     # File Paths
     DATA_DIR: str = "data"
