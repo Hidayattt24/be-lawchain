@@ -378,6 +378,29 @@ JAWABAN (berdasarkan konteks UUD 1945 di atas):
             print("💡 Silakan restart Ollama dan coba lagi")
             raise
         
+        # Validasi konteks UUD 1945 terlebih dahulu
+        context_validation = self._validate_uud_context(question)
+        if not context_validation['is_relevant']:
+            print("❌ Pertanyaan di luar konteks UUD 1945")
+            return {
+                'pertanyaan': question,
+                'jawaban': context_validation['response'],
+                'metrics': {
+                    'semantic_similarity': 0.0,
+                    'content_coverage': 0.0,
+                    'answer_relevance': 0.0,
+                    'source_quality': 0.0,
+                    'legal_context': 0.0,
+                    'answer_completeness': 0.0,
+                    'confidence_score': 0.0,
+                    'estimated_accuracy': 0.0
+                },
+                'jumlah_sumber': 0,
+                'sumber_dokumen': [],
+                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'out_of_context': True
+            }
+        
         print("🔍 Mencari jawaban dengan hybrid search...")
         
         try:
@@ -480,6 +503,74 @@ ANALISIS MENDALAM DAN PENJELASAN DETAIL (berdasarkan konteks UUD 1945):
         except Exception as e:
             print(f"❌ Error saat memproses pertanyaan: {str(e)}")
             raise
+    
+    def _validate_uud_context(self, question: str) -> Dict[str, Any]:
+        """Validasi apakah pertanyaan berkaitan dengan UUD 1945"""
+        
+        # Kata kunci yang menunjukkan pertanyaan tentang UUD 1945
+        uud_keywords = {
+            'uud', 'undang-undang dasar', 'konstitusi', 'pasal', 'ayat', 'bab',
+            'pancasila', 'bhinneka tunggal ika', 'nkri', 'republik indonesia',
+            'presiden', 'wakil presiden', 'menteri', 'dpr', 'dpd', 'mpr',
+            'mahkamah konstitusi', 'mahkamah agung', 'kekuasaan kehakiman',
+            'kekuasaan eksekutif', 'kekuasaan legislatif', 'bpk', 'komisi yudisial',
+            'hak asasi manusia', 'hak warga negara', 'kewajiban warga negara',
+            'wilayah negara', 'lambang negara', 'bahasa negara', 'bendera negara',
+            'lagu kebangsaan', 'ekonomi nasional', 'kesejahteraan sosial',
+            'pendidikan nasional', 'pertahanan negara', 'keamanan negara'
+        }
+        
+        # Kata kunci yang menunjukkan pertanyaan di luar konteks hukum
+        non_legal_keywords = {
+            'resep', 'masakan', 'memasak', 'kuliner', 'makanan', 'minuman',
+            'olahraga', 'sepak bola', 'basket', 'game', 'permainan',
+            'teknologi', 'programming', 'coding', 'komputer', 'software',
+            'musik', 'lagu', 'artis', 'film', 'movie', 'entertainment',
+            'fashion', 'gaya', 'trend', 'belanja', 'shopping',
+            'wisata', 'travel', 'liburan', 'destinasi', 'pariwisata',
+            'kesehatan', 'penyakit', 'obat', 'dokter', 'rumah sakit',
+            'cuaca', 'ramalan cuaca', 'iklim', 'meteorologi',
+            'matematika', 'fisika', 'kimia', 'biologi', 'science',
+            'cerita', 'dongeng', 'novel', 'puisi', 'sastra'
+        }
+        
+        question_lower = question.lower()
+        
+        # Cek apakah ada kata kunci non-legal yang jelas
+        non_legal_found = any(keyword in question_lower for keyword in non_legal_keywords)
+        
+        if non_legal_found:
+            return {
+                'is_relevant': False,
+                'response': f"Maaf, pertanyaan '{question}' yang Anda berikan berada di luar konteks sistem AI LawChain ini. AI ini secara khusus dirancang untuk membantu memberikan informasi dan analisis mengenai Undang-Undang Dasar 1945 (UUD 1945) Republik Indonesia. Silakan ajukan pertanyaan yang berkaitan dengan konstitusi, pasal-pasal UUD 1945, hak dan kewajiban warga negara, struktur pemerintahan, atau aspek hukum konstitusional lainnya."
+            }
+        
+        # Cek apakah ada kata kunci UUD yang relevan
+        uud_score = sum(1 for keyword in uud_keywords if keyword in question_lower)
+        
+        # Jika tidak ada kata kunci UUD sama sekali, lakukan pengecekan lebih lanjut
+        if uud_score == 0:
+            # Cek apakah pertanyaan memiliki pola yang menunjukkan pertanyaan hukum
+            legal_patterns = [
+                'hukum', 'aturan', 'peraturan', 'ketentuan', 'kewenangan', 'tugas',
+                'fungsi', 'wewenang', 'tanggung jawab', 'kekuasaan', 'kedaulatan',
+                'negara', 'pemerintah', 'pemerintahan', 'nasional', 'kebangsaan'
+            ]
+            
+            pattern_score = sum(1 for pattern in legal_patterns if pattern in question_lower)
+            
+            # Jika tidak ada indikasi hukum sama sekali
+            if pattern_score == 0:
+                return {
+                    'is_relevant': False,
+                    'response': f"Maaf, pertanyaan '{question}' yang Anda berikan tampaknya berada di luar konteks sistem AI LawChain ini. AI ini secara khusus berfokus pada Undang-Undang Dasar 1945 (UUD 1945) dan aspek konstitusional Republik Indonesia. Mohon ajukan pertanyaan yang berkaitan dengan UUD 1945, seperti tentang pasal-pasal tertentu, struktur pemerintahan, hak dan kewajiban warga negara, atau prinsip-prinsip konstitusional lainnya."
+                }
+        
+        # Jika lolos validasi, pertanyaan dianggap relevan
+        return {
+            'is_relevant': True,
+            'response': None
+        }
     
     def calculate_comprehensive_metrics(self, query: str, retrieved_docs: List, answer: str) -> Dict[str, float]:
         """Menghitung berbagai metrik untuk evaluasi jawaban dan akurasi"""

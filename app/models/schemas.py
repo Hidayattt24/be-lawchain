@@ -50,6 +50,7 @@ class QuestionResponse(BaseModel):
     sumber_dokumen: List[SourceDocument] = Field(..., description="Source documents")
     timestamp: str = Field(..., description="Response timestamp")
     processing_time: Optional[float] = Field(None, description="Processing time in seconds")
+    out_of_context: Optional[bool] = Field(default=False, description="Whether question is outside UUD 1945 context")
 
 
 class ErrorResponse(BaseModel):
