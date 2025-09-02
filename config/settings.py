@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     
     # Ollama Settings
     OLLAMA_BASE_URL: str = "http://localhost:11434"
-    OLLAMA_LLM_MODEL: str = "llama3.1:8b"
+    OLLAMA_LLM_MODEL: str = "gemma2:2b"
     OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
     OLLAMA_TEMPERATURE: float = 0.1
     OLLAMA_TIMEOUT: int = 600  # Increased to 10 minutes for more reliable processing

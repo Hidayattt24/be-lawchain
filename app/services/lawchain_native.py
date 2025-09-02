@@ -111,7 +111,7 @@ class NativeOllamaEmbedding:
 class NativeOllamaLLM:
     """Wrapper untuk Ollama LLM tanpa LangChain"""
     
-    def __init__(self, model: str = "llama3.1:8b", base_url: str = "http://localhost:11434", temperature: float = 0.1):
+    def __init__(self, model: str = "gemma2:2b", base_url: str = "http://localhost:11434", temperature: float = 0.1):
         self.model = model
         self.base_url = base_url
         self.temperature = temperature
@@ -283,7 +283,7 @@ class LawChainNative:
                 raise Exception("API Ollama tidak responsif")
             
             models = response.json().get('models', [])
-            required_models = ['llama3.1:8b', 'nomic-embed-text']
+            required_models = ['gemma2:2b', 'nomic-embed-text']
             available_models = [model['name'] for model in models]
             
             missing_models = [model for model in required_models 
@@ -484,7 +484,7 @@ class LawChainNative:
         
         try:
             self.llm = NativeOllamaLLM(
-                model="llama3.1:8b",
+                model="gemma2:2b",
                 base_url="http://localhost:11434",
                 temperature=0.1
             )
@@ -1290,7 +1290,7 @@ JAWABAN (dalam bahasa Indonesia):
             print(f"   • Total dokumen: {self.total_documents}")
             print(f"   • Total halaman: {len(self.documents)}")
             print(f"   • Total chunks: {self.total_chunks}")
-            print(f"   • Model LLM: llama3.1:8b (Native)")
+            print(f"   • Model LLM: gemma2:2b (Native)")
             print(f"   • Model Embedding: nomic-embed-text (Native)")
             print(f"   • Vector Store: FAISS (Native)")
             print(f"   • Framework: Custom RAG (Tanpa LangChain)")

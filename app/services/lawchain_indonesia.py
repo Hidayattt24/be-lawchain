@@ -93,7 +93,7 @@ class LawChainIndonesia:
                 raise Exception("API Ollama tidak responsif")
             
             models = response.json().get('models', [])
-            required_models = ['llama3.1:8b', 'nomic-embed-text']
+            required_models = ['gemma2:2b', 'nomic-embed-text']
             available_models = [model['name'] for model in models]
             
             missing_models = [model for model in required_models 
@@ -296,7 +296,7 @@ class LawChainIndonesia:
         
         try:
             self.llm = Ollama(
-                model="llama3.1:8b",
+                model="gemma2:2b",
                 base_url="http://localhost:11434",
                 temperature=0.1
                 # Note: timeout parameter removed as it's not supported in newer versions
@@ -310,7 +310,7 @@ class LawChainIndonesia:
         except Exception as e:
             print(f"❌ Error mengatur LLM: {str(e)}")
             print("💡 Pastikan Ollama berjalan dengan: ollama serve")
-            print("💡 Dan model tersedia dengan: ollama pull llama3.1:8b")
+            print("💡 Dan model tersedia dengan: ollama pull gemma2:2b")
             raise
     
     def create_qa_chain(self):
@@ -1140,7 +1140,7 @@ ANALISIS MENDALAM DAN PENJELASAN DETAIL (berdasarkan konteks UUD 1945):
             print(f"   • Total dokumen: {self.total_documents}")
             print(f"   • Total halaman: {len(self.documents)}")
             print(f"   • Total chunks: {self.total_chunks}")
-            print(f"   • Model LLM: llama3.1:8b")
+            print(f"   • Model LLM: gemma2:2b")
             print(f"   • Model Embedding: nomic-embed-text")
             print(f"   • Vector Store: FAISS")
             print(f"{'=' * 60}")
@@ -1208,7 +1208,7 @@ def main():
         print(f"\n❌ Error fatal: {str(e)}")
         print("💡 Pastikan:")
         print("   1. Ollama sudah berjalan")
-        print("   2. Model llama3.1:8b dan nomic-embed-text sudah di-pull")
+        print("   2. Model gemma2:2b dan nomic-embed-text sudah di-pull")
         print("   3. Folder 'data' berisi file PDF UUD 1945")
 
 
