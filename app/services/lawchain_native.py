@@ -929,25 +929,28 @@ class LawChainNative:
             print("🤖 Generating answer with custom QA...")
             try:
                 prompt_template = """
-Kamu adalah ahli hukum konstitusi Indonesia yang sangat menguasai Undang-Undang Dasar 1945 (UUD 1945).
-Tugasmu adalah memberikan analisis yang mendalam dan penjelasan yang sangat detail berdasarkan konteks dokumen UUD 1945.
+Anda adalah asisten hukum profesional yang bertugas memberikan jawaban berbasis dokumen hukum Indonesia khususnya UUD 1945.
 
-INSTRUKSI KHUSUS:
-1. WAJIB gunakan HANYA informasi yang tersedia dalam KONTEKS di bawah ini
-2. Untuk pertanyaan tentang pasal, bab, atau ketentuan tertentu: berikan bunyi lengkap dan jelaskan maknanya
-3. Untuk pertanyaan tentang tugas, wewenang, atau fungsi: analisis berdasarkan seluruh dokumen yang relevan dalam konteks
-4. Berikan penjelasan yang SANGAT DETAIL dan KOMPREHENSIF dalam bahasa Indonesia yang formal
-5. Sertakan referensi pasal, ayat, bab, atau sumber yang spesifik
-6. Jika informasi tersebar di beberapa bagian dokumen, gabungkan untuk memberikan gambaran lengkap
-7. Untuk pertanyaan umum, berikan analisis mendalam berdasarkan prinsip-prinsip yang terkandung dalam konteks
-8. Hanya jika benar-benar tidak ada informasi relevan, katakan: "Maaf, informasi tentang [topik] tidak ditemukan dalam dokumen UUD 1945 yang tersedia."
+INSTRUKSI LENGKAP:
+1. Analisis konteks dokumen dengan teliti
+2. Berikan jawaban yang akurat berdasarkan informasi yang tersedia
+3. WAJIB menyertakan referensi pasal/ayat yang spesifik jika tersedia
+4. Gunakan bahasa Indonesia formal dan profesional
+5. Struktur jawaban dengan jelas dan sistematis
+6. Jika informasi tidak lengkap, sampaikan keterbatasan tersebut
+
+FORMAT JAWABAN:
+- Mulai dengan penjelasan umum konsep yang ditanyakan
+- Cantumkan dasar hukum (pasal/ayat) yang relevan dengan format: "Pasal [nomor] ayat ([nomor])"
+- Berikan analisis dan interpretasi
+- Tutup dengan kesimpulan yang jelas
 
 KONTEKS LENGKAP DARI DOKUMEN UUD 1945:
 {context}
 
 PERTANYAAN YANG HARUS DIJAWAB SECARA DETAIL: {question}
 
-ANALISIS MENDALAM DAN PENJELASAN DETAIL (berdasarkan konteks UUD 1945):
+JAWABAN TERSTRUKTUR (berdasarkan konteks UUD 1945):
 """
                 
                 prompt = prompt_template.format(context=context, question=question)
@@ -1065,22 +1068,28 @@ ANALISIS MENDALAM DAN PENJELASAN DETAIL (berdasarkan konteks UUD 1945):
             print("🤖 Generating answer...")
             try:
                 prompt_template = """
-Kamu adalah asisten hukum ahli yang menguasai Undang-Undang Dasar 1945 (UUD 1945). 
-Tugasmu adalah menjawab pertanyaan tentang UUD 1945 dengan akurat dan informatif dalam bahasa Indonesia.
+Anda adalah asisten hukum profesional yang bertugas memberikan jawaban berbasis dokumen hukum Indonesia khususnya UUD 1945.
 
-INSTRUKSI PENTING:
-1. Jawab HANYA dalam bahasa Indonesia
-2. Berikan jawaban yang akurat berdasarkan konteks yang diberikan
-3. Jika informasi tidak cukup, katakan "Maaf, informasi tidak cukup untuk menjawab pertanyaan ini"
-4. Sertakan referensi pasal atau bab yang relevan jika memungkinkan
-5. Berikan penjelasan yang mudah dipahami
+INSTRUKSI LENGKAP:
+1. Analisis konteks dokumen dengan teliti
+2. Berikan jawaban yang akurat berdasarkan informasi yang tersedia
+3. WAJIB menyertakan referensi pasal/ayat yang spesifik jika tersedia
+4. Gunakan bahasa Indonesia formal dan profesional
+5. Struktur jawaban dengan jelas dan sistematis
+6. Jika informasi tidak lengkap, sampaikan keterbatasan tersebut
+
+FORMAT JAWABAN:
+- Mulai dengan penjelasan umum konsep yang ditanyakan
+- Cantumkan dasar hukum (pasal/ayat) yang relevan dengan format: "Pasal [nomor] ayat ([nomor])"
+- Berikan analisis dan interpretasi
+- Tutup dengan kesimpulan yang jelas
 
 KONTEKS DOKUMEN:
 {context}
 
 PERTANYAAN: {question}
 
-JAWABAN (dalam bahasa Indonesia):
+JAWABAN TERSTRUKTUR (dalam bahasa Indonesia):
 """
                 
                 prompt = prompt_template.format(context=context, question=question)
@@ -1373,7 +1382,7 @@ def main():
         print(f"\n❌ Error fatal: {str(e)}")
         print("💡 Pastikan:")
         print("   1. Ollama sudah berjalan")
-        print("   2. Model llama3.1:8b dan nomic-embed-text sudah di-pull")
+        print("   2. Model gemma2:2b dan nomic-embed-text sudah di-pull")
         print("   3. Folder 'data' berisi file PDF UUD 1945")
 
 

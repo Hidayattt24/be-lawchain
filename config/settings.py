@@ -38,15 +38,14 @@ class Settings(BaseSettings):
     OLLAMA_TIMEOUT: int = 600  # Increased to 10 minutes for more reliable processing
     
     # Document Processing
-    CHUNK_SIZE: int = 800  # Reduced for better granularity in legal documents
-    CHUNK_OVERLAP: int = 150  # Reduced proportionally
+    CHUNK_SIZE: int = 600  # Optimized for Gemma2:2b performance (reduced from 800)
+    CHUNK_OVERLAP: int = 100  # Optimized proportionally for better context
     SIMILARITY_THRESHOLD: float = 0.3  # Lower threshold for better recall
     MAX_RETRIEVED_DOCS: int = 10  # Increased for better coverage
     
-    # File Paths
+    # File Paths - Optimized Storage Configuration
     DATA_DIR: str = "data"
-    VECTOR_STORE_LANGCHAIN_PATH: str = "storage/vector_store_faiss"
-    VECTOR_STORE_NATIVE_PATH: str = "storage/vector_store_native"
+    VECTOR_STORE_OPTIMIZED_PATH: str = "storage/vector_store_faiss_optimized"  # Primary optimized storage
     LOGS_DIR: str = "logs"
     STORAGE_DIR: str = "storage"
     

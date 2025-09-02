@@ -9,8 +9,7 @@ from typing import Dict, Any
 
 from app.models.schemas import (
     QuestionRequest, QuestionResponse, ErrorResponse, 
-    HealthResponse, SystemInfoResponse, RebuildRequest, RebuildResponse,
-    MetricsModel, SourceDocument
+    HealthResponse, SystemInfoResponse, RebuildRequest, RebuildResponse
 )
 from app.services.lawchain_optimized_service import optimized_lawchain_service
 from app.services.lawchain_service import lawchain_service  # Import service lama untuk kompatibilitas
@@ -55,10 +54,11 @@ async def health_check():
         
         return HealthResponse(
             status=status,
-            version=settings.APP_VERSION,
             timestamp=format_timestamp(),
             uptime=calculate_uptime(app_start_time),
-            services=services
+            services=services,
+            model="gemma2:2b",
+            implementation="hybrid_optimized"
         )
         
     except Exception as e:
@@ -113,94 +113,27 @@ async def ask_question(request: QuestionRequest):
         # Semua method (langchain, native, optimized) akan menggunakan implementasi optimized
         # untuk performa terbaik, tetapi tetap kompatibel dengan frontend
         if method in ["langchain", "native", "optimized"]:
-            logger.info(f"🔄 Processing question with method '{method}' using optimized backend")
-            
             # Gunakan optimized service untuk semua method
             response = await optimized_lawchain_service.answer_question(
                 question=request.question,
                 use_context=getattr(request, 'use_context', True)
             )
             
-            logger.info(f"📤 Backend response keys: {list(response.keys())}")
-            logger.info(f"📤 Response success: {response.get('success')}")
-            logger.info(f"📤 Answer length: {len(response.get('answer', ''))}")
-            logger.info(f"📤 Sources count: {len(response.get('sources', []))}")
-            
             if not response.get('success', True):
-                logger.error(f"❌ Backend returned error: {response.get('error', 'Unknown error')}")
                 raise HTTPException(
                     status_code=500,
                     detail=response.get('error', 'Unknown error occurred')
                 )
             
             # Convert to response model dengan method yang diminta frontend
-            sources = response.get('sources', [])
-            
-            # Convert sources to expected format
-            formatted_sources = []
-            for i, source in enumerate(sources):
-                # Safer field extraction with proper defaults
-                formatted_source = {
-                    "dokumen": str(source.get('filename', source.get('file', 'UUD1945.pdf'))),
-                    "judul": str(source.get('title', source.get('judul', 'UUD 1945 - Dokumen Hukum'))),
-                    "sumber_url": str(source.get('source_url', source.get('url', 'https://www.dpr.go.id'))),
-                    "institusi": str(source.get('institution', source.get('institusi', 'Republik Indonesia'))),
-                    "priority_score": int(source.get('priority_score', source.get('score', 100))),
-                    "halaman": str(source.get('page', source.get('halaman', '1'))),
-                    "chunk_id": i,
-                    "similarity_score": float(source.get('similarity_score', source.get('score', 0.8))),
-                    "preview": str(source.get('content', source.get('text', 'Dokumen UUD 1945')))[:200] + "..."
-                }
-                formatted_sources.append(SourceDocument(**formatted_source))
-            
-            # Create realistic metrics based on actual response quality
-            metadata = response.get('metadata', {})
-            answer_text = response.get('answer', '')
-            sources_count = len(sources)
-            
-            # Check if question was out of context
-            is_out_of_context = metadata.get('out_of_context', False)
-            
-            if is_out_of_context:
-                # For out-of-context questions, metrics should be very low
-                metrics = MetricsModel(
-                    semantic_similarity=0.05,  # 5%
-                    content_coverage=0.08,     # 8%
-                    answer_relevance=0.03,     # 3%
-                    source_quality=0.10,       # 10%
-                    legal_context=0.02,        # 2%
-                    answer_completeness=0.05,  # 5%
-                    confidence_score=0.04,     # 4%
-                    estimated_accuracy=0.0     # 0%
-                )
-            else:
-                # Calculate realistic metrics based on content for valid questions
-                base_relevance = 0.75 + (min(sources_count, 5) * 0.04)  # 75-95%
-                base_completeness = 0.70 + (min(len(answer_text), 1000) / 1000 * 0.25)  # 70-95%
-                base_accuracy = 0.80 + (min(sources_count, 5) * 0.035)  # 80-97.5%
-                
-                metrics = MetricsModel(
-                    semantic_similarity=round(base_relevance + 0.05, 2),
-                    content_coverage=round(base_completeness + 0.08, 2),
-                    answer_relevance=round(base_relevance, 2),
-                    source_quality=round(0.85 + (sources_count * 0.025), 2),
-                    legal_context=round(base_accuracy - 0.05, 2),
-                    answer_completeness=round(base_completeness, 2),
-                    confidence_score=round((base_relevance + base_completeness) / 2, 2),
-                    estimated_accuracy=round(base_accuracy * 100, 1)
-                )
-            
             return QuestionResponse(
                 success=response.get('success', True),
-                pertanyaan=response.get('question', ''),
-                jawaban=response.get('answer', ''),
-                method=method,
-                metrics=metrics,
-                jumlah_sumber=len(sources),
-                sumber_dokumen=formatted_sources,
-                timestamp=format_timestamp(),
-                processing_time=metadata.get('processing_time_seconds', 0.0),
-                out_of_context=is_out_of_context
+                question=response.get('question', ''),
+                answer=response.get('answer', ''),
+                sources=response.get('sources', []),
+                metadata=response.get('metadata', {}),
+                method=method,  # Return method yang diminta frontend
+                model="gemma2:2b"
             )
         else:
             raise HTTPException(

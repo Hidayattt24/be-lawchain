@@ -70,12 +70,15 @@ def validate_ollama_connection() -> Dict[str, Any]:
         }
 
 
-def check_vector_store_exists(method: str) -> bool:
-    """Check if vector store exists for given method"""
-    if method == "langchain":
-        return os.path.exists(os.path.join(settings.VECTOR_STORE_LANGCHAIN_PATH, "index.faiss"))
+def check_vector_store_exists(method: str = "optimized") -> bool:
+    """Check if optimized vector store exists"""
+    if method == "optimized":
+        return os.path.exists(os.path.join(settings.VECTOR_STORE_OPTIMIZED_PATH, "index.faiss"))
+    # Legacy support for backward compatibility
+    elif method == "langchain":
+        return os.path.exists(os.path.join(settings.VECTOR_STORE_OPTIMIZED_PATH, "index.faiss"))
     elif method == "native":
-        return os.path.exists(os.path.join(settings.VECTOR_STORE_NATIVE_PATH, "index.faiss"))
+        return os.path.exists(os.path.join(settings.VECTOR_STORE_OPTIMIZED_PATH, "index.faiss"))
     return False
 
 
@@ -102,6 +105,11 @@ def format_processing_time(start_time: float) -> float:
     return round(time.time() - start_time, 3)
 
 
+def format_time_duration(duration: float) -> str:
+    """Format duration in seconds to readable string"""
+    return f"{duration:.3f}s"
+
+
 def sanitize_filename(filename: str) -> str:
     """Sanitize filename for safe file operations"""
     import re
@@ -114,8 +122,7 @@ def ensure_directories():
         settings.DATA_DIR,
         settings.LOGS_DIR,
         settings.STORAGE_DIR,
-        settings.VECTOR_STORE_LANGCHAIN_PATH,
-        settings.VECTOR_STORE_NATIVE_PATH
+        settings.VECTOR_STORE_OPTIMIZED_PATH
     ]
     
     for directory in directories:
