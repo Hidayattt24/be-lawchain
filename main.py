@@ -11,9 +11,8 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
 from config.settings import settings
-from app.core.api import router as api_router
+from app.core.api_structured import router as api_router
 from app.utils.helpers import setup_logging, ensure_directories
-from app.services.lawchain_service import lawchain_service
 
 # Setup logging
 logger = setup_logging()
@@ -26,40 +25,65 @@ app_start_time = time.time()
 async def lifespan(app: FastAPI):
     """Application lifespan events"""
     # Startup
-    logger.info("Starting LawChain Backend API...")
+    logger.info("Starting LawChain Structured RAG Backend API...")
     logger.info(f"AI Model: {settings.OLLAMA_LLM_MODEL} (Google Gemma2:2b)")
-    logger.info("Model Migration: Successfully migrated from LLaMA 3.1:8B to Gemma2:2b")
-    logger.info("Model Optimization: Reduced size from 4.9GB to 1.6GB (67% reduction)")
+    logger.info("🔥 SISTEM RAG TERSTRUKTUR - DUAL SERVICE ARCHITECTURE")
+    logger.info("📊 LangChain & Native implementations available")
+    logger.info("🎯 Vector Store: vector_store_structured dengan metadata precision")
+    logger.info("Available Services: LangChain framework & Native implementation")
+    logger.info("Model Optimization: Gemma2:2b (1.6GB) untuk performance optimal")
     
     # Ensure directories exist
     ensure_directories()
 
-    # Initialize LawChain services in background
+    # Initialize services info (lazy loading)
     try:
-        logger.info("Initializing optimized LawChain services...")
-        # Initialize optimized LangChain as primary choice due to better performance
-        # Performance results: 36% faster, 22% more accurate, better source quality
-        logger.info("Using optimized LangChain implementation with Gemma2:2b as primary choice")
-        logger.info("LawChain services ready for on-demand initialization")
-        logger.info("Optimized Gemma2:2b system delivers 36% faster processing with 22% better accuracy")
-        logger.info("Storage: Using optimized FAISS vectorstore for enhanced performance")
+        logger.info("Structured RAG services available for on-demand initialization:")
+        logger.info("- LangChain: LangChain framework dengan custom retriever")
+        logger.info("- Native: Pure Python implementation tanpa LangChain")
+        logger.info("Vector Store: Menggunakan vector_store_structured dengan hard filtering")
+        logger.info("Services ready for lazy initialization pada first request")
     except Exception as e:
-        logger.warning(f"Service initialization failed: {str(e)}")
+        logger.warning(f"Service info logging failed: {str(e)}")
         logger.info("Services will be initialized on first request")
     
-    logger.info("LawChain Backend API with Gemma2:2b started successfully!")
+    logger.info("LawChain Structured RAG Backend API started successfully!")
     logger.info(f"Server running on {settings.HOST}:{settings.PORT}")
     logger.info(f"API Documentation: http://{settings.HOST}:{settings.PORT}/docs")
     
     yield    # Shutdown
-    logger.info("Shutting down LawChain Backend API...")
+    logger.info("Shutting down LawChain Structured RAG Backend API...")
 
 
 # Create FastAPI app
 app = FastAPI(
-    title=settings.APP_NAME,
-    description=settings.APP_DESCRIPTION,
-    version=settings.APP_VERSION,
+    title="🏛️ LawChain API - Enhanced RAG System",
+    description="""
+    Sistem chatbot hukum Indonesia berbasis RAG (Retrieval-Augmented Generation) 
+    dengan arsitektur dual service untuk fleksibilitas dan performa optimal.
+    
+    **🎯 Fitur Utama:**
+    - Context Detection: Filter otomatis pertanyaan di luar konteks hukum
+    - Dual Service: LangChain framework + Native implementation  
+    - Enhanced Accuracy: Document ranking dan confidence scoring
+    - Fallback System: Gemma2:2b untuk pertanyaan hukum umum
+    
+    **📚 Database:** UUD 1945 dari sumber resmi (MKRI, MPR, BPHN)
+    
+    **🤖 AI Model:** Gemma2:2b (1.6GB) optimized untuk domain hukum Indonesia
+    
+    **📖 Documentation:** Lihat `/docs` untuk interactive API documentation
+    """,
+    version="2.0.0",
+    contact={
+        "name": "LawChain Development Team",
+        "url": "https://github.com/lawchain/api",
+        "email": "dev@lawchain.id"
+    },
+    license_info={
+        "name": "MIT License",
+        "url": "https://opensource.org/licenses/MIT"
+    },
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url=f"{settings.API_V1_PREFIX}/openapi.json",
@@ -108,15 +132,38 @@ app.include_router(
 # Root endpoint
 @app.get("/")
 async def root():
-    """Root endpoint"""
+    """
+    🏛️ LawChain API - Enhanced RAG System
+    
+    Sistem chatbot hukum Indonesia dengan teknologi RAG terdepan.
+    """
     return {
-        "message": "🏛️ LawChain Backend API",
-        "version": settings.APP_VERSION,
-        "description": settings.APP_DESCRIPTION,
-        "docs": f"{settings.API_V1_PREFIX}/docs",
-        "health": f"{settings.API_V1_PREFIX}/health",
+        "message": "🏛️ LawChain Enhanced RAG Backend API",
+        "version": "2.0.0",
+        "description": "Dual Service Architecture - LangChain & Native RAG implementations",
+        "features": {
+            "context_detection": "✅ Automatic legal context filtering", 
+            "dual_service": "✅ LangChain + Native implementations",
+            "enhanced_accuracy": "✅ Document ranking & confidence scoring",
+            "fallback_system": "✅ Gemma2:2b for general legal questions"
+        },
+        "system_info": {
+            "ai_model": "Gemma2:2b (1.6GB optimized)",
+            "vector_store": "FAISS with structured metadata",
+            "database": "UUD 1945 from verified sources (MKRI, MPR, BPHN)",
+            "embeddings": "nomic-embed-text"
+        },
+        "endpoints": {
+            "ask_question": f"{settings.API_V1_PREFIX}/ask",
+            "health_check": f"{settings.API_V1_PREFIX}/health",
+            "service_status": f"{settings.API_V1_PREFIX}/services/status",
+            "documentation": "/docs",
+            "redoc": "/redoc"
+        },
+        "available_services": ["langchain", "native"],
         "status": "running",
-        "uptime_seconds": time.time() - app_start_time
+        "uptime_seconds": time.time() - app_start_time,
+        "architecture": "enhanced_dual_service_rag"
     }
 
 

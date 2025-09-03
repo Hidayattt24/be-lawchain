@@ -13,6 +13,7 @@ ollama==0.5.3
 
 # Document Processing
 pymupdf==1.26.3
+pdfplumber==0.11.4
 python-dotenv==1.0.1
 
 # Vector Store & Embeddings

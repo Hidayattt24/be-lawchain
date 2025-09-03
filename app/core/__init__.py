@@ -2,6 +2,10 @@
 Core package initialization
 """
 
-from .api import router
+# Legacy API - temporarily disabled
+# from .api import router
 
-__all__ = ["router"]
+# New structured API is now the default
+# Import api_structured directly in main.py
+
+__all__ = []

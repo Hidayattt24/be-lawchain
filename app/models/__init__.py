@@ -10,8 +10,11 @@ from .schemas import (
     SystemInfoResponse,
     RebuildRequest,
     RebuildResponse,
+    DocUploadRequest,
+    UploadResponse,
     MetricsModel,
-    SourceDocument
+    SourceDocument,
+    Metrics
 )
 
 __all__ = [
@@ -22,6 +25,9 @@ __all__ = [
     "SystemInfoResponse",
     "RebuildRequest",
     "RebuildResponse",
+    "DocUploadRequest",
+    "UploadResponse",
     "MetricsModel",
-    "SourceDocument"
+    "SourceDocument",
+    "Metrics"
 ]
