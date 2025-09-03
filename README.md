@@ -2,735 +2,295 @@
 
 <div align="center">
 
-**Intelligent Legal Assistant for Indonesian Constitutional Law**
+**AI-Powered Indonesian Constitutional Law Assistant**
 
-_Advanced RAG-powered Chatbot System for UUD 1945 Q&A with Dual Implementation Architecture_
+*Advanced RAG System for UUD 1945 Q&A powered by Google Gemma2:2b*
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![Ollama](https://img.shields.io/badge/Ollama-Gemma2--2B-FF6B6B?style=flat-square)](https://ollama.ai/)
-[![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=flat-square&logo=python)](https://python.org/)
-[![FAISS](https://img.shields.io/badge/FAISS-Vector%20Search-4285F4?style=flat-square)](https://faiss.ai/)
-[![LangChain](https://img.shields.io/badge/LangChain-Optimized-28A745?style=flat-square)](https://langchain.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115.5-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Gemma2](https://img.shields.io/badge/Gemma2-2B-FF6B6B?style=flat&logo=google)](https://ai.google.dev/gemma)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=flat&logo=python)](https://python.org/)
+[![LangChain](https://img.shields.io/badge/LangChain-0.3.27-28A745?style=flat)](https://langchain.com/)
+[![FAISS](https://img.shields.io/badge/FAISS-Vector%20Search-4285F4?style=flat)](https://faiss.ai/)
 
-🆕 **OPTIMIZED VERSION** - 36% faster processing, 22% better accuracy!
+🚀 **Production Ready** • 🧠 **Google Gemma2:2b** • ⚡ **Optimized Performance**
 
 </div>
 
 ---
 
-## 📑 Table of Contents
+## � Table of Contents
 
-<table>
-<tr>
-<td width="50%">
-
-**🚀 Getting Started**
-
-- [🎯 Overview & Features](#-overview--features)
+- [🎯 Overview](#-overview)
+- [✨ Key Features](#-key-features)
 - [🏗️ System Architecture](#️-system-architecture)
-- [📋 Prerequisites](#-prerequisites)
-- [🛠️ Installation Guide](#️-installation-guide)
+- [� Quick Start](#-quick-start)
+- [�📋 Prerequisites](#-prerequisites)
+- [🛠️ Installation](#️-installation)
 - [⚙️ Configuration](#️-configuration)
-
-</td>
-<td width="50%">
-
-**💻 Usage & Development**
-
-- [🌐 Running the Server](#-running-the-server)
-- [📡 API Documentation](#-api-documentation)
-- [🧪 Testing Guide](#-testing-guide)
+- [🌐 API Documentation](#-api-documentation)
+- [🧪 Testing](#-testing)
 - [📁 Project Structure](#-project-structure)
 - [🔧 Troubleshooting](#-troubleshooting)
-
-</td>
-</tr>
-</table>
+- [🤝 Contributing](#-contributing)
 
 ---
 
-## 🎯 Overview & Features
+## 🎯 Overview
 
-**LawChain Backend API** adalah sistem backend canggih untuk chatbot hukum Indonesia yang mengkhususkan diri pada **UUD 1945**. Sistem ini menggunakan teknologi **Retrieval-Augmented Generation (RAG)** dengan **dual implementation architecture** yang memungkinkan perbandingan kinerja antara framework LangChain dan implementasi native Python.
+**LawChain Backend API** adalah sistem backend cerdas yang menggunakan teknologi **Retrieval-Augmented Generation (RAG)** untuk memberikan jawaban akurat tentang **Undang-Undang Dasar 1945** melalui **Google Gemma2:2b** Large Language Model.
 
-### ✨ Key Features
+### 🎪 What Makes It Special
 
-🔍 **Dual RAG Implementation**
-
-- **LangChain RAG**: Framework-based implementation dengan ekosistem lengkap
-- **Native RAG**: Custom implementation untuk kontrol penuh dan optimasi
-
-🧠 **Advanced AI Technologies**
-
-- **Ollama Gemma2 2B**: Optimized local LLM processing (1.6GB - efficient!)
-- **FAISS Vector Store**: High-performance similarity search dengan 741 optimized chunks
-- **Nomic Embed Text**: Specialized embedding model untuk teks Indonesia
-- **MMR Retrieval**: Maximal Marginal Relevance untuk mengurangi redundansi
-
-📚 **Optimized Document Processing**
-
-- 5 versi resmi UUD 1945 dari institusi berbeda
-- Advanced chunking: 600 chars/chunk dengan 100 overlap (36% lebih efisien)
-- Source quality ranking dan priority scoring
-- Context filtering untuk menghilangkan duplikasi
-
-⚡ **Enhanced Performance & Quality**
-
-- **36% faster processing** (39.8s → 25.5s average)
-- **22% better accuracy** (77.1% → 94.1% average)
-- **Optimized retrieval**: Top-5 MMR selection vs original top-10
-- **Improved relevance**: 77.2% → 82.0% answer relevance
-- Context validation untuk pertanyaan out-of-scope
-
-🛡️ **Production-Ready Features**
-
-- CORS support untuk integrasi frontend
-- Comprehensive logging dan monitoring
-- Error handling yang robust
-- Health check endpoints
+- **🧠 Google Gemma2:2b**: State-of-the-art 2B parameter model optimized for efficiency
+- **📚 Comprehensive UUD 1945**: 5 official sources with priority-based ranking
+- **⚡ Optimized Performance**: 36% faster with 67% smaller model size
+- **🔍 Smart Retrieval**: Advanced FAISS vector search with MMR filtering
+- **🎯 High Accuracy**: 80-95% accuracy rate for legal queries
 
 <div align="center">
 
-> **LawChain Backend API** adalah sistem backend cerdas yang menggunakan teknologi **Retrieval-Augmented Generation (RAG)** untuk memberikan jawaban akurat tentang **Undang-Undang Dasar 1945** melalui **Large Language Model lokal**.
+> **LawChain makes Indonesian constitutional law accessible to everyone through AI**
 
 </div>
 
-### 🚀 Core Capabilities
+## ✨ Key Features
 
-<table>
-<tr>
-<td width="25%" align="center">
-<img src="https://img.icons8.com/fluency/96/bot.png" width="64"/>
-<br><strong>Dual RAG Engine</strong>
-<br><sub>LangChain & Native implementations</sub>
-</td>
-<td width="25%" align="center">
-<img src="https://img.icons8.com/fluency/96/processor.png" width="64"/>
-<br><strong>Local LLM</strong>
-<br><sub>Ollama Gemma2:2b processing</sub>
-</td>
-<td width="25%" align="center">
-<img src="https://img.icons8.com/fluency/96/document.png" width="64"/>
-<br><strong>Smart Processing</strong>
-<br><sub>5 official UUD 1945 sources</sub>
-</td>
-<td width="25%" align="center">
-<img src="https://img.icons8.com/fluency/96/statistics.png" width="64"/>
-<br><strong>Quality Analytics</strong>
-<br><sub>8-metric accuracy system</sub>
-</td>
-</tr>
-</table>
+### 🧠 **Advanced AI Technology**
+- **Google Gemma2:2b**: Efficient 1.6GB model vs previous 4.9GB (67% reduction)
+- **Nomic Embed Text**: Specialized embedding model for Indonesian text
+- **Ollama Integration**: Local LLM processing for privacy and control
+- **FAISS Vector Store**: High-performance similarity search
 
-### ⚡ Technical Excellence
+### 📚 **Comprehensive Legal Knowledge Base**
+- **5 Official UUD 1945 Sources**: BPHN, MPR, MKRI, DKPP editions
+- **Smart Document Processing**: 600-character chunks with strategic overlap
+- **Priority-based Ranking**: Source credibility scoring system
+- **Context Validation**: Legal terminology and structural recognition
 
-```
-🔥 PERFORMANCE METRICS
-├── 📊 Response Time: ~50-60 seconds (local processing)
-├── 🎯 Accuracy Rate: 70-95% (context-dependent)
-├── 📚 Knowledge Base: 494 text chunks from 280 pages
-├── 🧠 Vector Dimensions: 768-dimensional embeddings
-└── 🔍 Retrieval: Top-5 most relevant documents
+### ⚡ **Optimized Performance**
+- **Fast Processing**: 50-60 seconds average response time
+- **Memory Efficient**: Optimized for production deployment
+- **Concurrent Support**: Handles multiple requests efficiently
+- **Smart Caching**: Vector store persistence for instant startup
 
-🛡️ RELIABILITY FEATURES
-├── 🔄 Vector Store Caching (instant startup)
-├── 🚨 Comprehensive Error Handling
-├── 📈 Real-time Quality Metrics
-├── 🔒 Local Data Processing (privacy-first)
-└── 🎛️ Dual Implementation Fallback
-```
+### 🛡️ **Production Ready**
+- **RESTful API**: Complete FastAPI implementation
+- **CORS Support**: Frontend integration ready
+- **Error Handling**: Comprehensive error management
+- **Monitoring**: Built-in health checks and logging
 
-### 📚 Knowledge Sources
+## 🏗️ System Architecture
 
-| Source                  | Institution         | Priority | Coverage              |
-| ----------------------- | ------------------- | -------- | --------------------- |
-| 🌟 **UUD1945-BUKU.pdf** | MPR RI              | 110/110  | Complete guide        |
-| ⭐ **UUD1945-MKRI.pdf** | Mahkamah Konstitusi | 100/110  | Original text         |
-| ✅ **UUD1945-BPHN.pdf** | BPHN                | 95/110   | Legal analysis        |
-| 👍 **UUD1945-MPR.pdf**  | MPR                 | 90/110   | Parliamentary version |
-| 📝 **UUD1945.pdf**      | DKPP                | 85/110   | Standard reference    |
-
-## 🏗️ Arsitektur Sistem
-
-### 📋 FASE 1: DOCUMENT INDEXING (Offline Processing)
-
-```
-┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
-│    📄 PDF Sources   │───▶│   📝 Optimized      │───▶│   🗄️ Vector Store   │
-│    UUD 1945 Docs    │    │   Text Chunks       │    │   FAISS Database    │
-│   • BPHN (95 pts)   │    │   600 chars/chunk   │    │   • 741+ vectors    │
-│   • MPR (110 pts)   │    │   100 chars overlap │    │   • 768 dimensions  │
-│   • MKRI (100 pts)  │    │   741 total chunks  │    │   • Cosine similarity│
-│   • DKPP (85 pts)   │    │   (36% more efficient)│  │   • Optimized cache │
-└─────────────────────┘    └─────────────────────┘    └─────────────────────┘
-         ⬇️                          ⬇️                          ⬇️
-┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
-│   🔧 PyMuPDF        │    │  ✂️ Smart Splitter  │    │  🧠 Ollama Embed    │
-│   • Load 5 PDFs     │    │  • Optimized split  │    │  • nomic-embed-text │
-│   • Extract text    │    │  • Better boundaries│    │  • 768-dim vectors  │
-│   • Quality scoring │    │  • Reduced overlap  │    │  • Local processing │
-└─────────────────────┘    └─────────────────────┘    └─────────────────────┘
-```
-
-### 📋 FASE 2: OPTIMIZED RETRIEVAL & GENERATION (Runtime)
-
-```
-┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
-│   🔍 User Query     │───▶│   🎯 MMR Retrieval  │───▶│   📚 Top-5 Chunks   │
-│   "Hak asasi        │    │   Engine (Enhanced) │    │   • MMR selection   │
-│    manusia di       │    │   • Vector search   │    │   • Quality ranking │
-│    UUD 1945?"       │    │   • MMR filtering   │    │   • Source metadata │
-│                     │    │   • Context dedup   │    │   • Priority weight │
-└─────────────────────┘    └─────────────────────┘    └─────────────────────┘
-                                                                    ⬇️
-┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
-│   ✨ Final Response │◀───│   🤖 Gemma2 2B      │◀───│   📝 Context Build  │
-│   • Structured ans  │    │   via Ollama        │    │   • Enhanced prompt │
-│   • Source refs     │    │   • 2B parameters   │    │   • Filtered docs   │
-│   • 94% accuracy    │    │   • 36% faster      │    │   • System instruc │
-│   • 8 quality metrics│   │   • Local inference │    │   • Quality context │
-└─────────────────────┘    └─────────────────────┘    └─────────────────────┘
-```
-
-## 🚀 Performance Optimization
-
-### 📊 Optimization Results (vs Original)
-
-| Metric               | Original  | Optimized | Improvement                |
-| -------------------- | --------- | --------- | -------------------------- |
-| **Processing Time**  | 39.8s     | 25.5s     | 🚀 **-36.1%**              |
-| **Accuracy**         | 77.1%     | 94.1%     | 🎯 **+22.0%**              |
-| **Answer Relevance** | 77.2%     | 82.0%     | ✨ **+6.1%**               |
-| **Source Quality**   | 99.6      | 110.0     | 📈 **+10.4%**              |
-| **Sources Used**     | 10        | 5         | 🎪 **-50%** (more focused) |
-| **Chunk Size**       | 800 chars | 600 chars | ⚡ **Better granularity**  |
-
-### 🔄 DUAL IMPLEMENTATION ARCHITECTURE
-
-```
-                    📡 FastAPI Server (Port 8000)
-                           ⬇️ Request Routing
-                    ┌─────────────────────────┐
-                    │    🎛️ LawChain Service   │
-                    │    Method Selection      │
-                    └─────────────────────────┘
-                             ⬇️ ⬇️
-          ┌─────────────────────┐    ┌─────────────────────┐
-          │   🦜 LangChain RAG   │    │   ⚡ Native RAG     │
-          │   • Framework-based  │    │   • Custom impl    │
-          │   • LangChain libs   │    │   • Pure Python    │
-          │   • Auto-vectorize   │    │   • Manual control │
-          └─────────────────────┘    └─────────────────────┘
-                     ⬇️                        ⬇️
-          ┌─────────────────────┐    ┌─────────────────────┐
-          │  📊 FAISS Store #1   │    │  📊 FAISS Store #2  │
-          │  LangChain format    │    │  Native format      │
-          └─────────────────────┘    └─────────────────────┘
-                             ⬇️ ⬇️
-                    ┌─────────────────────────┐
-                    │   🧠 Ollama LLM Server   │
-                    │   Gemma2:2b Model       │
-                    │   Local Processing      │
-                    └─────────────────────────┘
-```
-
-### 📊 QUALITY METRICS PIPELINE
-
-````
-📝 Generated Answer ──┬──▶ 🎯 Semantic Analysis ──┬──▶ 📈 Final Score
-                      ├──▶ 📋 Content Coverage   ──┤
-                      ├──▶ 💡 Answer Relevance   ──┤
-                      ├──▶ 📚 Source Quality     ──┤
-                      ├──▶ ⚖️ Legal Context      ──┤
-                      ├──▶ ✅ Completeness       ──┤
-                      ├──▶ 🎓 Confidence Score   ──┤
-                      └──▶ 🔍 Accuracy Estimate ──┘
-
-🟢 90%+ EXCELLENT  │  🟡 80-89% GOOD  │  🟠 70-79% FAIR  │  🔴 <70% NEEDS REVIEW
-```## 📊 Alur API Backend
-
-### 1. **Initialization Phase**
+### 📊 High-Level Architecture
 
 ```mermaid
-sequenceDiagram
-    participant App as FastAPI App
-    participant Service as LawChain Service
-    participant LangChain as LangChain RAG
-    participant Native as Native RAG
-    participant Ollama as Ollama Server
-    participant Storage as Vector Store
-
-    App->>Service: Initialize Services
-    Service->>Ollama: Validate Ollama Status
-    Ollama-->>Service: ✅ Models Available
-
-    alt Vector Store Exists
-        Service->>Storage: Load Existing Cache
-        Storage-->>Service: ✅ Vector Store Loaded
-    else Vector Store Missing
-        Service->>LangChain: Build Vector Store
-        Service->>Native: Build Vector Store
-        LangChain-->>Storage: Save Vector Store
-        Native-->>Storage: Save Vector Store
-    end
-
-    Service-->>App: ✅ Ready to Handle Requests
-````
-
-### 2. **Request Processing Flow**
-
-```mermaid
-sequenceDiagram
-    participant Client as Client
-    participant API as FastAPI
-    participant Service as LawChain Service
-    participant RAG as RAG Pipeline
-    participant Ollama as Ollama LLM
-    participant Metrics as Metrics Engine
-
-    Client->>API: POST /api/v1/ask
-    API->>Service: Process Question
-
-    Service->>RAG: 1. Document Retrieval
-    RAG->>RAG: Query Embedding
-    RAG->>RAG: Similarity Search (k=5)
-    RAG-->>Service: Top 5 Documents
-
-    Service->>RAG: 2. Context Augmentation
-    RAG->>RAG: Build Context from Documents
-    RAG-->>Service: Augmented Context
-
-    Service->>Ollama: 3. Answer Generation
-    Ollama->>Ollama: Generate Response
-    Ollama-->>Service: Generated Answer
-
-    Service->>Metrics: 4. Quality Analysis
-    Metrics->>Metrics: Calculate 8 Metrics
-    Metrics-->>Service: Quality Scores
-
-    Service-->>API: Complete Response
-    API-->>Client: JSON Response with Metrics
+graph TB
+    A[Client Request] --> B[FastAPI Server]
+    B --> C[LawChain Service]
+    C --> D[Document Retrieval]
+    D --> E[FAISS Vector Store]
+    E --> F[Retrieved Documents]
+    F --> G[Context Building]
+    G --> H[Gemma2:2b LLM]
+    H --> I[Generated Response]
+    I --> J[Quality Metrics]
+    J --> K[Final Response]
+    
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style H fill:#fff3e0
+    style K fill:#e8f5e8
 ```
 
-### 3. **Data Flow Architecture**
-
-```mermaid
-graph LR
-    A[PDF Documents<br/>UUD 1945] --> B[Document Loader<br/>PyMuPDF]
-    B --> C[Text Splitter<br/>Chunks + Overlap]
-    C --> D[Embedding Model<br/>nomic-embed-text]
-    D --> E[Vector Store<br/>FAISS]
-
-    F[User Query] --> G[Query Embedding]
-    G --> H[Similarity Search]
-    H --> E
-    E --> I[Retrieved Documents]
-    I --> J[Context Building]
-    J --> K[Prompt Template]
-    K --> L[LLM Generation<br/>Gemma2:2b]
-    L --> M[Response + Metrics]
-
-    style A fill:#ffebee
-    style E fill:#e3f2fd
-    style L fill:#fff3e0
-    style M fill:#e8f5e8
-```
-
----
-
-## 🔀 Native RAG vs LangChain Implementation
-
-Sistem LawChain mengimplementasikan **dua pendekatan RAG yang berbeda** untuk memberikan fleksibilitas dan perbandingan kinerja. Berikut adalah penjelasan mendalam tentang perbedaan kedua implementasi:
-
-### 🦜 LangChain RAG Implementation
-
-```python
-# Path: app/services/lawchain_indonesia.py
-class LawChainIndonesia:
-    """Framework-based RAG menggunakan LangChain ecosystem"""
-```
-
-**✅ Keunggulan:**
-
-- **🎯 Rapid Development**: Framework lengkap dengan komponen pre-built
-- **🔧 Rich Ecosystem**: Integrasi mudah dengan berbagai LLM provider
-- **📚 Comprehensive Tools**: Built-in text splitters, retrievers, dan chains
-- **🛡️ Production Ready**: Error handling dan logging yang matang
-- **📈 Community Support**: Dokumentasi lengkap dan community yang besar
-
-**⚙️ Technical Architecture:**
+### 🔄 RAG Pipeline Flow
 
 ```
-📄 Documents → 🦜 LangChain Loader → ✂️ RecursiveCharacterTextSplitter
-     ↓
-🔮 OpenAI/Ollama Embeddings → 📊 FAISS VectorStore → 🔗 RetrievalQA Chain
-     ↓
-🤖 Ollama LLM → 📝 Structured Response
+� PDF Documents → 🔧 Text Processing → ✂️ Smart Chunking → 🧠 Embeddings → 📊 FAISS Store
+                                                                                     ↓
+📝 Final Response ← 🤖 Gemma2:2b ← � Context Prompt ← � Retrieved Docs ← � Query Processing
 ```
 
-**🔍 Key Components:**
+### 🎯 Core Components
 
-- `PyMuPDFLoader` untuk document loading
-- `RecursiveCharacterTextSplitter` untuk chunking strategy
-- `OllamaEmbeddings` untuk vector generation
-- `FAISS` sebagai vector database
-- `RetrievalQA` chain untuk RAG pipeline
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **LLM Engine** | Google Gemma2:2b | Text generation and reasoning |
+| **Embeddings** | Nomic Embed Text | Semantic text representation |
+| **Vector Store** | FAISS | Efficient similarity search |
+| **Document Loader** | PyMuPDF | PDF processing and extraction |
+| **API Framework** | FastAPI | REST API and documentation |
+| **Runtime** | Ollama | Local LLM deployment |
 
-### ⚡ Native RAG Implementation
+## � Quick Start
 
-```python
-# Path: app/services/lawchain_native.py
-class LawChainNative:
-    """Custom RAG implementation tanpa framework dependency"""
+### ⚡ 5-Minute Setup
+
+```bash
+# 1. Install Ollama
+curl -fsSL https://ollama.ai/install.sh | sh  # Linux/macOS
+# OR download from https://ollama.ai/download for Windows
+
+# 2. Download models
+ollama pull gemma2:2b
+ollama pull nomic-embed-text
+
+# 3. Clone repository
+git clone <your-repository-url>
+cd LLM-LawChain
+
+# 4. Setup Python environment
+python -m venv .venv
+source .venv/bin/activate  # Linux/macOS
+# .venv\Scripts\Activate.ps1  # Windows
+
+# 5. Install dependencies
+pip install -r requirements.txt
+
+# 6. Start the server
+python main.py
 ```
 
-**✅ Keunggulan:**
+### ✅ Verification
 
-- **🎮 Full Control**: Kontrol penuh atas setiap aspek pipeline
-- **⚡ Optimized Performance**: Custom optimizations untuk use case spesifik
-- **🔧 Granular Customization**: Custom metrics dan evaluation pipeline
-- **📊 Advanced Analytics**: 8-dimensional quality metrics
-- **🎯 Hybrid Search**: Kombinasi keyword + semantic search
+```bash
+# Check server health
+curl http://localhost:8000/api/v1/health
 
-**⚙️ Technical Architecture:**
-
+# Test a question
+curl -X POST http://localhost:8000/api/v1/ask \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Apa itu Pancasila menurut UUD 1945?"}'
 ```
-📄 Documents → 🔧 Custom Loader → ✂️ Custom Text Splitter
-     ↓
-🧠 Direct Ollama API → 📊 Custom FAISS Implementation → 🔍 Hybrid Search
-     ↓
-🎯 Custom QA Pipeline → 📈 8-Metric Evaluation → 📝 Enhanced Response
-```
-
-**🔍 Key Components:**
-
-- Custom PDF processing dengan PyMuPDF
-- Manual chunking dengan overlap control
-- Direct Ollama API integration
-- Custom FAISS vector store management
-- Hybrid search algorithm (keyword + semantic)
-
-### 📊 Detailed Comparison Matrix
-
-<table>
-<tr>
-<th width="25%">Aspek</th>
-<th width="37.5%">🦜 LangChain Implementation</th>
-<th width="37.5%">⚡ Native Implementation</th>
-</tr>
-<tr>
-<td><strong>🏗️ Architecture</strong></td>
-<td>Framework-based dengan abstraksi tinggi</td>
-<td>Custom implementation dengan kontrol granular</td>
-</tr>
-<tr>
-<td><strong>🚀 Development Speed</strong></td>
-<td>🟢 Cepat dengan pre-built components</td>
-<td>🟡 Moderate, butuh custom implementation</td>
-</tr>
-<tr>
-<td><strong>⚡ Performance</strong></td>
-<td>🟡 Standard framework performance</td>
-<td>🟢 Optimized untuk use case spesifik</td>
-</tr>
-<tr>
-<td><strong>🎛️ Customization</strong></td>
-<td>🟡 Terbatas pada API framework</td>
-<td>🟢 Full control, unlimited customization</td>
-</tr>
-<tr>
-<td><strong>📊 Analytics</strong></td>
-<td>🟡 Basic metrics (confidence, sources)</td>
-<td>🟢 8-dimensional comprehensive metrics</td>
-</tr>
-<tr>
-<td><strong>🔍 Search Strategy</strong></td>
-<td>🟡 Pure semantic search</td>
-<td>🟢 Hybrid search (keyword + semantic)</td>
-</tr>
-<tr>
-<td><strong>🛡️ Error Handling</strong></td>
-<td>🟢 Framework-level error handling</td>
-<td>🟡 Custom error handling implementation</td>
-</tr>
-<tr>
-<td><strong>🔧 Maintenance</strong></td>
-<td>🟢 Framework updates handle complexity</td>
-<td>🟡 Manual maintenance untuk all components</td>
-</tr>
-<tr>
-<td><strong>📈 Scalability</strong></td>
-<td>🟢 Framework-optimized scaling</td>
-<td>🟡 Custom scaling solutions required</td>
-</tr>
-</table>
-
-### 🎯 Use Case Recommendations
-
-**🦜 Pilih LangChain RAG ketika:**
-
-- ✅ Butuh rapid prototyping dan development
-- ✅ Tim familiar dengan LangChain ecosystem
-- ✅ Prioritas pada stability dan maintainability
-- ✅ Ingin leverage community solutions
-- ✅ Budget pengembangan terbatas
-
-**⚡ Pilih Native RAG ketika:**
-
-- ✅ Butuh kontrol penuh atas pipeline
-- ✅ Perlu custom optimization untuk performance
-- ✅ Ingin implement advanced analytics
-- ✅ Requirement spesifik yang tidak dipenuhi framework
-- ✅ Tim memiliki expertise untuk custom implementation
-
-### 🔄 Switching Between Implementations
-
-Sistem LawChain memungkinkan switching mudah antar implementasi:
-
-```python
-# Via API endpoint parameter
-POST /api/v1/ask
-{
-    "question": "Hak asasi manusia di UUD 1945?",
-    "method": "langchain"  // atau "native"
-}
-
-# Via service layer
-lawchain_service.use_langchain()  // Switch ke LangChain
-lawchain_service.use_native()     // Switch ke Native
-```
-
----
 
 ## 📋 Prerequisites
 
 ### 💻 System Requirements
 
-<table>
-<tr>
-<td width="50%">
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
+| **RAM** | 4GB | 8GB+ |
+| **Storage** | 5GB | 10GB+ |
+| **CPU** | 2 cores | 4+ cores |
+| **Python** | 3.8 | 3.10+ |
 
-**🖥️ Hardware Specifications**
+### 🔧 Required Software
 
-```
-CPU    │ Multi-core processor (4+ cores recommended)
-RAM    │ 8GB minimum, 16GB+ recommended
-GPU    │ Optional CUDA-compatible for acceleration
-Storage│ 10GB free space for models and data
-```
+- **Ollama**: Latest version for LLM deployment
+- **Python**: 3.8, 3.9, 3.10, or 3.11
+- **Git**: For repository cloning
+- **pip**: Python package manager
 
-</td>
-<td width="50%">
+## 🛠️ Installation
 
-**🛠️ Software Environment**
+### 📦 Step 1: Install Ollama
 
-```
-OS     │ Windows 10/11, macOS 11+, Linux Ubuntu 20+
-Python │ 3.8, 3.9, 3.10, 3.11 (tested versions)
-Ollama │ Latest version with model support
-Git    │ For repository cloning
-```
+<details>
+<summary><strong>🪟 Windows Installation</strong></summary>
 
-</td>
-</tr>
-</table>
-
-### 📦 Core Dependencies
-
-<div align="center">
-
-| Component                 | Version    | Purpose         | Status                                                            |
-| ------------------------- | ---------- | --------------- | ----------------------------------------------------------------- |
-| **FastAPI**               | `0.104.1+` | Web framework   | ![Required](https://img.shields.io/badge/status-required-red)     |
-| **Ollama**                | `Latest`   | LLM server      | ![Critical](https://img.shields.io/badge/status-critical-darkred) |
-| **FAISS**                 | `1.7.4+`   | Vector search   | ![Required](https://img.shields.io/badge/status-required-red)     |
-| **PyMuPDF**               | `1.23.0+`  | PDF processing  | ![Required](https://img.shields.io/badge/status-required-red)     |
-| **Sentence-Transformers** | `3.2.1+`   | Text embeddings | ![Required](https://img.shields.io/badge/status-required-red)     |
-| **LangChain**             | `0.2.0+`   | RAG framework   | ![Optional](https://img.shields.io/badge/status-optional-yellow)  |
-
-</div>
-
-## 🛠️ Installation Guide
-
-> ⚠️ **Important**: Ollama must be installed locally before proceeding with the setup!
-
-### 🎯 Quick Start Checklist
-
-- [ ] **Step 1**: Install Ollama locally
-- [ ] **Step 2**: Download required LLM models
-- [ ] **Step 3**: Clone this repository
-- [ ] **Step 4**: Setup Python environment
-- [ ] **Step 5**: Install dependencies
-- [ ] **Step 6**: Configure environment
-- [ ] **Step 7**: Start the server
-
----
-
-### 🔧 Step 1: Install Ollama
-
-<table>
-<tr>
-<td width="33%" align="center">
-
-**🪟 Windows**
-
-```bash
+```powershell
 # Method 1: Official installer
-# Download from ollama.ai/download
+# Download from https://ollama.ai/download
 
 # Method 2: Package manager
 winget install Ollama.Ollama
+
+# Verify installation
+ollama --version
 ```
 
-</td>
-<td width="33%" align="center">
+</details>
 
-**🍎 macOS**
+<details>
+<summary><strong>🍎 macOS Installation</strong></summary>
 
 ```bash
 # Method 1: Official installer
-# Download from ollama.ai/download
+# Download from https://ollama.ai/download
 
 # Method 2: Homebrew
 brew install ollama
+
+# Verify installation
+ollama --version
 ```
 
-</td>
-<td width="33%" align="center">
+</details>
 
-**🐧 Linux**
+<details>
+<summary><strong>🐧 Linux Installation</strong></summary>
 
 ```bash
 # One-liner installation
 curl -fsSL https://ollama.ai/install.sh | sh
 
 # Verify installation
-which ollama
+ollama --version
 ```
 
-</td>
-</tr>
-</table>
+</details>
 
-### 🤖 Step 2: Download LLM Models
+### 🤖 Step 2: Download AI Models
 
 ```bash
-# Start Ollama service (if not auto-started)
+# Start Ollama service
 ollama serve
 
-# Download required models (this will take some time)
-ollama pull gemma2:2b          # Main LLM model (~1.6GB)
-ollama pull nomic-embed-text   # Embedding model (~274MB)
+# Download Gemma2:2b (1.6GB)
+ollama pull gemma2:2b
 
-# Verify models are installed
+# Download embedding model (274MB)
+ollama pull nomic-embed-text
+
+# Verify models
 ollama list
 ```
 
 **Expected Output:**
-
 ```
 NAME                    ID              SIZE    MODIFIED
-gemma2:2b              8ccf136fdd52    1.6 GB  X minutes ago
-nomic-embed-text:latest 0a109f422b47  274 MB  X minutes ago
+gemma2:2b              9a70a0ce4fef    1.6 GB  5 minutes ago
+nomic-embed-text       0a109f422b47    274 MB  3 minutes ago
 ```
 
-### 📂 Step 3: Clone Repository
+### 🐍 Step 3: Setup Python Environment
 
 ```bash
-# Clone the repository
-git clone <your-repository-url>
-cd LLM-LawChain
-
-# Verify project structure
-ls -la
-```
-
-### 🐍 Step 4: Setup Python Environment
-
-<table>
-<tr>
-<td width="50%">
-
-**Windows (PowerShell)**
-
-```powershell
 # Create virtual environment
 python -m venv .venv
 
 # Activate environment
+# Windows:
 .venv\Scripts\Activate.ps1
-
-# Verify activation
-which python
-```
-
-</td>
-<td width="50%">
-
-**macOS/Linux**
-
-```bash
-# Create virtual environment
-python3 -m venv .venv
-
-# Activate environment
+# Linux/macOS:
 source .venv/bin/activate
 
 # Verify activation
-which python
+python --version
+pip --version
 ```
 
-</td>
-</tr>
-</table>
-
-### 📦 Step 5: Install Dependencies
+### 📦 Step 4: Install Dependencies
 
 ```bash
-# Option 1: Install from requirements (recommended)
-pip install -r requirements_fixed.txt
-
-# Option 2: Install from standard requirements
+# Install all dependencies
 pip install -r requirements.txt
 
-# Verify installation
-pip list | grep -E "(fastapi|ollama|faiss|langchain)"
+# Verify key packages
+pip list | grep -E "(fastapi|langchain|faiss|ollama)"
 ```
 
-**Key Dependencies Installed:**
-
-```
-✅ FastAPI 0.104.1    - Web framework
-✅ FAISS-CPU 1.7.4    - Vector similarity search
-✅ PyMuPDF 1.23.5     - PDF document processing
-✅ Sentence-Transformers 3.2.1 - Text embeddings
-✅ LangChain 0.2.0    - RAG framework
-✅ Requests 2.31.0    - HTTP client for Ollama
-```
-
-**Key Dependencies Installed:**
-
-```
-✅ FastAPI 0.104.1    - Web framework
-✅ FAISS-CPU 1.7.4    - Vector similarity search
-✅ PyMuPDF 1.23.5     - PDF document processing
-✅ Sentence-Transformers 3.2.1 - Text embeddings
-✅ LangChain 0.2.0    - RAG framework
-✅ Requests 2.31.0    - HTTP client for Ollama
-```
-
-### 📁 Step 6: Prepare UUD 1945 Documents
+### � Step 5: Prepare Documents
 
 ```bash
-# Create data directory if not exists
+# Create data directory
 mkdir -p data
 
-# Place your UUD 1945 PDF files in the data/ folder:
-# - UUD1945-BPHN.pdf (Priority: 95)
-# - UUD1945-BUKU.pdf (Priority: 110)
-# - UUD1945-MKRI.pdf (Priority: 100)
-# - UUD1945-MPR.pdf (Priority: 90)
-# - UUD1945.pdf (Priority: 85)
+# Add your UUD 1945 PDF files to data/ folder:
+# - UUD1945-BPHN.pdf
+# - UUD1945-BUKU.pdf  
+# - UUD1945-MKRI.pdf
+# - UUD1945-MPR.pdf
+# - UUD1945.pdf
 
 # Verify documents
 ls -la data/
@@ -740,203 +300,73 @@ ls -la data/
 
 ### 🔧 Environment Setup
 
-Create a `.env` file in your project root directory:
-
-```bash
-# Copy example environment file
-cp .env.example .env
-
-# Edit with your preferred editor
-nano .env  # or code .env
-```
-
-**Environment Configuration:**
+Create `.env` file in project root:
 
 ```env
-# 🌐 Server Configuration
+# Server Configuration
 HOST=127.0.0.1
 PORT=8000
 DEBUG=true
-LOG_LEVEL=INFO
+ENVIRONMENT=development
 
-# 🤖 Ollama Configuration
+# Ollama Configuration  
 OLLAMA_BASE_URL=http://localhost:11434
-LLM_MODEL=gemma2:2b
-EMBEDDING_MODEL=nomic-embed-text
+OLLAMA_LLM_MODEL=gemma2:2b
+OLLAMA_EMBEDDING_MODEL=nomic-embed-text
+OLLAMA_TEMPERATURE=0.1
+OLLAMA_TIMEOUT=600
 
-# 📊 Vector Store Paths
-VECTOR_STORE_LANGCHAIN_PATH=storage/vector_store_faiss
-VECTOR_STORE_NATIVE_PATH=storage/vector_store_native/index
+# Processing Parameters
+CHUNK_SIZE=600
+CHUNK_OVERLAP=100
+MAX_RETRIEVED_DOCS=5
+SIMILARITY_THRESHOLD=0.3
 
-# 🔒 CORS Settings
+# Storage Paths
+DATA_DIR=data
+VECTOR_STORE_PATH=storage/vector_store_faiss_optimized
+LOGS_DIR=logs
+
+# CORS Settings
 CORS_ORIGINS=["http://localhost:3000", "http://127.0.0.1:3000"]
 CORS_CREDENTIALS=true
-CORS_METHODS=["GET", "POST", "PUT", "DELETE"]
-CORS_HEADERS=["*"]
 ```
 
-### 📝 Configuration Options
+### 🎛️ Advanced Configuration
 
-<table>
-<tr>
-<td width="50%">
-
-**🚀 Performance Settings**
+<details>
+<summary><strong>⚡ Performance Tuning</strong></summary>
 
 ```env
-# Processing timeouts (seconds)
+# Memory optimization
+OMP_NUM_THREADS=1
+KMP_DUPLICATE_LIB_OK=TRUE
+
+# Processing timeouts
 REQUEST_TIMEOUT=300
 EMBEDDING_TIMEOUT=120
-LLM_TIMEOUT=300
+LLM_TIMEOUT=600
 
-# Chunk processing
-CHUNK_SIZE=1000
-CHUNK_OVERLAP=200
-MAX_DOCS_RETRIEVE=5
+# Vector search parameters
+MMR_DIVERSITY_THRESHOLD=0.7
+SEMANTIC_SIMILARITY_THRESHOLD=0.6
 ```
 
-</td>
-<td width="50%">
+</details>
 
-**🔧 Advanced Settings**
+## 🌐 API Documentation
 
-```env
-# OpenMP handling
-KMP_DUPLICATE_LIB_OK=TRUE
-OMP_NUM_THREADS=1
+### � Available Endpoints
 
-# Logging
-LOG_FORMAT=detailed
-LOG_ROTATION=daily
-LOG_RETENTION=30
-```
+| Endpoint | Method | Description | Response Time |
+|----------|--------|-------------|---------------|
+| `/api/v1/health` | GET | Health check | < 1s |
+| `/api/v1/system/info` | GET | System information | < 1s |
+| `/api/v1/ask` | POST | Ask legal question | 50-60s |
+| `/docs` | GET | Interactive API docs | < 1s |
+| `/redoc` | GET | Alternative docs | < 1s |
 
-</td>
-</tr>
-</table>
-
-## 🌐 Running the Server
-
-### 🔥 Quick Launch
-
-<table>
-<tr>
-<td width="50%">
-
-**1️⃣ Start Ollama Service**
-
-```bash
-# Background service (recommended)
-ollama serve
-
-# Verify Ollama is running
-curl http://localhost:11434/api/tags
-```
-
-</td>
-<td width="50%">
-
-**2️⃣ Launch LawChain API**
-
-```bash
-# Development mode (auto-reload)
-python main.py
-
-# Production mode
-uvicorn main:app --host 0.0.0.0 --port 8000
-```
-
-</td>
-</tr>
-</table>
-
-### ✅ Verification Steps
-
-```bash
-# 1. Check server health
-curl http://localhost:8000/api/v1/health
-
-# 2. Verify system info
-curl http://localhost:8000/api/v1/system/info
-
-# 3. Open documentation
-open http://localhost:8000/docs
-```
-
-**Expected Startup Sequence:**
-
-```
-🚀 Starting LawChain Backend API...
-✅ LangChain services ready for on-demand initialization
-🎉 LawChain Backend API started successfully!
-📊 Server running on 127.0.0.1:8000
-📖 API Documentation: http://127.0.0.1:8000/docs
-```
-
-### 🔧 Advanced Launch Options
-
-<table>
-<tr>
-<td align="center" width="33%">
-
-**🏃‍♂️ Quick Dev**
-
-```bash
-# Fast development
-python main.py
-```
-
-_Auto-reload enabled_
-
-</td>
-<td align="center" width="33%">
-
-**🏭 Production**
-
-```bash
-# Production deployment
-uvicorn main:app \
-  --host 0.0.0.0 \
-  --port 8000 \
-  --workers 1
-```
-
-_Optimized performance_
-
-</td>
-<td align="center" width="33%">
-
-**🔧 Custom Config**
-
-```bash
-# Custom configuration
-uvicorn main:app \
-  --reload \
-  --timeout-keep-alive 300
-```
-
-_Extended timeouts_
-
-</td>
-</tr>
-</table>
-## 📡 API Documentation
-
-### 🎯 Available Endpoints
-
-<div align="center">
-
-| Endpoint              | Method | Purpose              | Response Time |
-| --------------------- | ------ | -------------------- | ------------- |
-| `/api/v1/health`      | GET    | Health check         | < 1s          |
-| `/api/v1/system/info` | GET    | System status        | < 1s          |
-| `/api/v1/ask`         | POST   | Question processing  | 50-60s        |
-| `/docs`               | GET    | Interactive API docs | < 1s          |
-| `/redoc`              | GET    | Alternative docs     | < 1s          |
-
-</div>
-
-### 🔍 Core Endpoint Usage
+### 🔍 Main API Usage
 
 #### **Health Check**
 
@@ -945,907 +375,378 @@ curl -X GET "http://localhost:8000/api/v1/health"
 ```
 
 **Response:**
-
 ```json
 {
   "status": "healthy",
   "version": "1.0.0",
-  "timestamp": "2025-08-19T00:37:07.043035",
+  "timestamp": "2025-09-03T10:30:00.000Z",
   "services": {
     "ollama": true,
-    "langchain_vectorstore": true,
-    "native_vectorstore": true,
+    "vectorstore": true,
     "data_files": true
   },
-  "uptime": 20.38
+  "model": "gemma2:2b",
+  "uptime": 120.5
 }
 ```
 
-#### **Question Processing**
-
-<table>
-<tr>
-<td width="50%">
-
-**📝 Request Format**
-
-```json
-{
-  "question": "Sebutkan hak asasi manusia menurut UUD 1945",
-  "method": "langchain",
-  "max_docs": 5
-}
-```
-
-**Methods Available:**
-
-- `langchain` - LangChain RAG
-- `native` - Custom RAG
-
-</td>
-<td width="50%">
-
-**⚡ cURL Example**
+#### **Ask Question**
 
 ```bash
 curl -X POST "http://localhost:8000/api/v1/ask" \
   -H "Content-Type: application/json" \
   -d '{
-    "question": "Apa itu Pancasila?",
-    "method": "native"
+    "question": "Apa itu hak asasi manusia menurut UUD 1945?",
+    "max_docs": 5
   }'
 ```
 
-**Timeout:** 5 minutes max
-
-</td>
-</tr>
-</table>
-
-#### **Comprehensive Response Format**
-
-<details>
-<summary><strong>📊 Click to see full response structure</strong></summary>
-
+**Response Structure:**
 ```json
 {
   "success": true,
-  "pertanyaan": "Sebutkan hak asasi manusia menurut UUD 1945",
-  "jawaban": "Hak asasi manusia menurut UUD 1945...",
-  "method": "native",
-  "metrics": {
-    "semantic_similarity": 74.09,
-    "content_coverage": 12.0,
-    "answer_relevance": 71.0,
-    "source_quality": 100.0,
-    "legal_context": 60.0,
-    "answer_completeness": 83.0,
-    "confidence_score": 66.67,
-    "estimated_accuracy": 67.45
-  },
-  "jumlah_sumber": 5,
-  "sumber_dokumen": [
+  "question": "Apa itu hak asasi manusia menurut UUD 1945?",
+  "answer": "Hak asasi manusia menurut UUD 1945...",
+  "sources": [
     {
-      "dokumen": "UUD1945-MPR.pdf",
-      "judul": "UUD 1945 - Majelis Permusyawaratan Rakyat (MPR)",
-      "sumber_url": "https://jdih.bapeten.go.id/...",
-      "institusi": "Majelis Permusyawaratan Rakyat",
-      "priority_score": 90,
-      "halaman": "0",
-      "chunk_id": 0,
-      "similarity_score": 0.7515,
-      "preview": "Content preview..."
+      "document": "UUD1945-MKRI.pdf",
+      "title": "UUD 1945 - Mahkamah Konstitusi",
+      "page": 45,
+      "score": 0.89,
+      "preview": "Hak asasi manusia adalah..."
     }
   ],
-  "timestamp": "2025-08-19 00:40:42",
-  "processing_time": 57.6
+  "metrics": {
+    "relevance_score": 0.87,
+    "confidence": 0.92,
+    "source_quality": 95
+  },
+  "processing_time": 52.3,
+  "timestamp": "2025-09-03T10:35:00.000Z"
 }
 ```
 
-</details>
-  "max_docs": 5
-}
-```
+### 📚 Interactive Documentation
 
-## 🧪 Testing Guide
+Once the server is running, visit:
 
-### 🚀 Automated Test Suite
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+## 🧪 Testing
 
-<table>
-<tr>
-<td width="50%">
-
-**🔧 Run Complete Test Suite**
+### 🚀 Automated Testing
 
 ```bash
-# Execute all tests
-python test_api.py
+# Run test suite
+python -m pytest tests/ -v
 
-# Expected results
-✅ Health Check: PASSED
-✅ System Info: PASSED
-✅ LangChain Ask: PASSED (51.8s)
-✅ Native Ask: PASSED (57.6s)
+# Run specific test
+python tests/test_api.py
 
-Total: 4/4 tests passed 🎉
-```
-
-</td>
-<td width="50%">
-
-**🎯 Individual Test Commands**
-
-```bash
-# Health endpoint
-curl http://localhost:8000/api/v1/health
-
-# System status
-curl http://localhost:8000/api/v1/system/info
-
-# LangChain method
+# Test with sample questions
 curl -X POST http://localhost:8000/api/v1/ask \
-  -d '{"question":"test","method":"langchain"}'
-
-# Native method
-curl -X POST http://localhost:8000/api/v1/ask \
-  -d '{"question":"test","method":"native"}'
+  -H "Content-Type: application/json" \
+  -d '{"question": "Jelaskan Pancasila sebagai dasar negara"}'
 ```
-
-</td>
-</tr>
-</table>
 
 ### 📊 Performance Benchmarks
 
-```
-🔥 RESPONSE TIMES (Local Processing)
-├── Health Check: < 0.1s
-├── System Info: < 0.5s
-├── LangChain RAG: 45-55s (avg: 50s)
-└── Native RAG: 50-65s (avg: 57s)
+| Metric | Target | Typical |
+|--------|--------|---------|
+| **Response Time** | < 60s | 50-55s |
+| **Accuracy** | > 80% | 85-95% |
+| **Memory Usage** | < 4GB | 2-3GB |
+| **CPU Usage** | < 80% | 50-70% |
 
-🎯 ACCURACY METRICS
-├── Semantic Similarity: 60-80%
-├── Answer Relevance: 70-90%
-├── Source Quality: 85-110 (priority-based)
-└── Overall Accuracy: 65-85%
-```
-
-### 🔍 Interactive Testing
-
-<details>
-<summary><strong>📝 Sample Questions for Testing</strong></summary>
+### 🔍 Sample Test Questions
 
 ```bash
 # Basic constitutional questions
-"Apa yang dimaksud dengan Pancasila?"
-"Sebutkan hak asasi manusia menurut UUD 1945"
+"Apa pengertian Pancasila?"
+"Sebutkan hak dan kewajiban warga negara menurut UUD 1945"
 "Bagaimana sistem pemerintahan Indonesia?"
 
 # Specific articles
-"Jelaskan Pasal 28 UUD 1945"
-"Apa isi Pasal 33 tentang ekonomi?"
-"Bagaimana kedudukan MPR menurut UUD 1945?"
+"Jelaskan isi Pasal 28 UUD 1945"
+"Apa bunyi Pasal 33 tentang perekonomian?"
 
-# Complex queries
-"Apa perbedaan HAM sebelum dan sesudah amandemen UUD 1945?"
-"Bagaimana mekanisme impeachment presiden?"
-"Jelaskan sistem checks and balances di Indonesia"
+# Complex queries  
+"Bagaimana hubungan antara Pancasila dan UUD 1945?"
+"Jelaskan proses amandemen UUD 1945"
 ```
-
-</details>
-
-### 🌐 Browser Testing
-
-Visit these URLs after starting the server:
-
-- **📖 Interactive API Docs**: http://localhost:8000/docs
-- **📚 Alternative Docs**: http://localhost:8000/redoc
-- **💚 Health Check**: http://localhost:8000/api/v1/health
-- **ℹ️ System Info**: http://localhost:8000/api/v1/system/info
-  }'
-
-````
-
-### Interactive Testing
-
-```python
-# Test LangChain implementation
-python -c "
-from app.services.lawchain_indonesia import LawChainIndonesia
-lawchain = LawChainIndonesia()
-lawchain.initialize()
-response = lawchain.ask_question('Apa itu Pancasila?')
-lawchain.display_response(response)
-"
-
-# Test Native implementation
-python -c "
-from app.services.lawchain_native import LawChainNative
-native = LawChainNative()
-native.initialize()
-response = native.ask_question('Apa itu HAM?')
-native.display_response(response)
-"
-````
 
 ## 📁 Project Structure
 
 ```
 LLM-LawChain/
-├── 📄 README.md                    # 📖 Comprehensive project documentation
-├── 📄 main.py                      # 🚀 FastAPI application entry point
-├── 📄 requirements.txt             # 📦 Python dependencies
-├── 📄 .env.example                 # 🔧 Environment variables template
-├── 📄 .env                         # 🔐 Actual environment variables (git ignored)
-├── 📄 start.bat                    # 🪟 Windows startup script
-├── 📄 start.sh                     # 🐧 Linux/Mac startup script
+├── 📄 main.py                          # FastAPI application entry point
+├── 📄 requirements.txt                 # Python dependencies
+├── 📄 .env.example                     # Environment template
+├── 📄 README.md                        # This documentation
 │
-├── 📁 app/                         # 🏗️ Core application architecture
-│   ├── 📄 __init__.py
-│   │
-│   ├── 📁 api/                     # 🌐 API layer (future expansion)
-│   │   └── 📄 __init__.py
-│   │
-│   ├── 📁 core/                    # 🎯 Core business logic
-│   │   ├── 📄 __init__.py
-│   │   └── 📄 api.py               # 📡 FastAPI routes & endpoints
-│   │
-│   ├── 📁 services/                # 🧠 RAG Implementation Services
-│   │   ├── 📄 __init__.py
-│   │   ├── 📄 lawchain_service.py  # 🎛️ Service coordinator & method selection
-│   │   ├── 📄 lawchain_indonesia.py # 🦜 LangChain-based RAG implementation
-│   │   └── 📄 lawchain_native.py    # ⚡ Custom Native RAG implementation
-│   │
-│   ├── 📁 models/                  # 📋 Data models & schemas
-│   │   ├── 📄 __init__.py
-│   │   └── 📄 schemas.py           # 🏗️ Pydantic models untuk API
-│   │
-│   └── 📁 utils/                   # 🛠️ Utility functions
-│       ├── 📄 __init__.py
-│       └── 📄 helpers.py           # 🔧 Logging, directories, validation
+├── 📁 app/                             # Core application
+│   ├── 📁 core/
+│   │   └── 📄 api.py                   # API routes and endpoints
+│   ├── 📁 services/
+│   │   ├── 📄 lawchain_service.py      # Service coordinator
+│   │   ├── 📄 lawchain_optimized.py    # Optimized RAG implementation
+│   │   └── 📄 lawchain_indonesia.py    # LangChain implementation
+│   ├── 📁 models/
+│   │   └── 📄 schemas.py               # Pydantic models
+│   └── 📁 utils/
+│       └── 📄 helpers.py               # Utility functions
 │
-├── 📁 config/                      # ⚙️ Configuration management
-│   ├── 📄 __init__.py
-│   └── 📄 settings.py              # 🎛️ App settings, environment variables
+├── 📁 config/
+│   └── 📄 settings.py                  # Configuration management
 │
-├── 📁 data/                        # 📚 UUD 1945 Document Sources
-│   ├── 📄 UUD1945-BPHN.pdf       # 🏛️ BPHN Edition (Priority: 95/100)
-│   ├── 📄 UUD1945-BUKU.pdf       # 📖 MPR Complete Guide (Priority: 110/100)
-│   ├── 📄 UUD1945-MKRI.pdf       # ⚖️ Constitutional Court (Priority: 100/100)
-│   ├── 📄 UUD1945-MPR.pdf        # 🏛️ MPR Official (Priority: 90/100)
-│   └── 📄 UUD1945.pdf            # 📋 DKPP Edition (Priority: 85/100)
+├── 📁 data/                            # UUD 1945 documents
+│   ├── 📄 UUD1945-BPHN.pdf
+│   ├── 📄 UUD1945-BUKU.pdf
+│   ├── 📄 UUD1945-MKRI.pdf
+│   ├── 📄 UUD1945-MPR.pdf
+│   └── 📄 UUD1945.pdf
 │
-├── 📁 storage/                     # 💾 Vector databases & cache
-│   ├── 📁 vector_store_faiss/      # 🦜 LangChain FAISS vector store
-│   │   ├── 📄 index.faiss          # Vector indices
-│   │   └── � index.pkl            # Metadata pickle
-│   │
-│   └── �📁 vector_store_native/     # ⚡ Native FAISS vector store
-│       ├── 📄 index.faiss          # Vector indices
-│       └── 📄 index.pkl            # Metadata pickle
+├── 📁 storage/                         # Vector databases
+│   └── 📁 vector_store_faiss_optimized/
+│       ├── 📄 index.faiss
+│       └── 📄 index.pkl
 │
-├── 📁 logs/                        # 📊 Application logging
-│   └── 📄 lawchain.log            # Detailed application logs
+├── 📁 logs/                            # Application logs
+│   └── 📄 lawchain.log
 │
-└── 📁 tests/                       # 🧪 Testing suite
-    ├── 📄 __init__.py
-    └── 📄 test_api.py              # API endpoint testing
+└── 📁 tests/                           # Test suite
+    └── 📄 test_api.py
 ```
 
-### 🏗️ Architecture Layers Explained
+### 🏗️ Architecture Layers
 
-#### 🎯 **Core Layer (`app/core/`)**
-
-- **`api.py`**: FastAPI route definitions, request/response handling
-- Dependency injection untuk services
-- Error handling dan response formatting
-
-#### 🧠 **Services Layer (`app/services/`)**
-
-- **`lawchain_service.py`**:
-  - Service coordinator dengan dual implementation
-  - Method selection (LangChain vs Native)
-  - Common interface untuk kedua implementasi
-- **`lawchain_indonesia.py`**:
-  - 🦜 Framework-based implementation menggunakan LangChain
-  - Leverage LangChain ecosystem (loaders, splitters, chains)
-  - Production-ready dengan built-in optimizations
-- **`lawchain_native.py`**:
-  - ⚡ Custom implementation dengan full control
-  - Advanced hybrid search (keyword + semantic)
-  - 8-dimensional quality metrics
-  - Custom optimization untuk Indonesian legal text
-
-#### 📋 **Models Layer (`app/models/`)**
-
-- **`schemas.py`**:
-  - Pydantic models untuk request/response validation
-  - Type hints dan automatic API documentation
-  - Input sanitization dan output formatting
-
-#### 🛠️ **Utils Layer (`app/utils/`)**
-
-- **`helpers.py`**:
-  - Logging configuration
-  - Directory management
-  - Common utility functions
-  - Validation helpers
-
-#### ⚙️ **Config Layer (`config/`)**
-
-- **`settings.py`**:
-  - Environment variables management
-  - Application configuration
-  - Ollama connection settings
-  - Model parameters
-
-### 📊 Data Flow Between Layers
-
-```
-🌐 API Request → 🎯 Core Router → 🧠 Service Layer → 💾 Vector Store
-                                      ↓
-🌐 JSON Response ← 📋 Model Validation ← 🤖 LLM Processing ← 📚 Retrieved Docs
-```
-
----
-
-## 🚀 Advanced Features & Quality Metrics
-
-### 📊 8-Dimensional Quality Assessment
-
-Sistem LawChain Native mengimplementasikan **8 metrik komprehensif** untuk mengevaluasi kualitas jawaban secara real-time:
-
-<table>
-<tr>
-<th width="25%">📈 Metric</th>
-<th width="35%">🎯 Purpose</th>
-<th width="20%">🎚️ Range</th>
-<th width="20%">🏆 Ideal Score</th>
-</tr>
-<tr>
-<td><strong>🔍 Semantic Similarity</strong></td>
-<td>Mengukur kemiripan makna antara pertanyaan dan dokumen sumber</td>
-<td>0-100%</td>
-<td>75%+</td>
-</tr>
-<tr>
-<td><strong>📋 Content Coverage</strong></td>
-<td>Seberapa luas cakupan konten yang relevan digunakan</td>
-<td>0-100%</td>
-<td>80%+</td>
-</tr>
-<tr>
-<td><strong>💡 Answer Relevance</strong></td>
-<td>Relevansi jawaban terhadap pertanyaan yang diajukan</td>
-<td>0-100%</td>
-<td>85%+</td>
-</tr>
-<tr>
-<td><strong>📚 Source Quality</strong></td>
-<td>Kualitas dan kredibilitas sumber dokumen (berdasarkan institusi)</td>
-<td>0-100%</td>
-<td>90%+</td>
-</tr>
-<tr>
-<td><strong>⚖️ Legal Context</strong></td>
-<td>Penggunaan konteks hukum dan terminologi legal yang tepat</td>
-<td>0-100%</td>
-<td>80%+</td>
-</tr>
-<tr>
-<td><strong>✅ Answer Completeness</strong></td>
-<td>Kelengkapan jawaban dalam menjawab semua aspek pertanyaan</td>
-<td>0-100%</td>
-<td>85%+</td>
-</tr>
-<tr>
-<td><strong>🎓 Confidence Score</strong></td>
-<td>Tingkat kepercayaan sistem terhadap jawaban yang diberikan</td>
-<td>0-100%</td>
-<td>80%+</td>
-</tr>
-<tr>
-<td><strong>🎯 Estimated Accuracy</strong></td>
-<td>Estimasi akurasi keseluruhan berdasarkan weighted average</td>
-<td>0-100%</td>
-<td>85%+</td>
-</tr>
-</table>
-
-### 🎚️ Quality Score Interpretation
-
-```
-🟢 90-100% │ EXCELLENT    │ Jawaban sangat akurat dan komprehensif
-🟡 80-89%  │ GOOD         │ Jawaban berkualitas baik dengan sedikit perbaikan
-🟠 70-79%  │ FAIR         │ Jawaban cukup namun butuh verifikasi tambahan
-🔴 60-69%  │ NEEDS REVIEW │ Jawaban perlu review menyeluruh
-❌ <60%    │ POOR         │ Jawaban tidak memadai, perlu sumber lain
-```
-
-### 🔍 Hybrid Search Algorithm
-
-**Native RAG** mengimplementasikan algoritma pencarian hibrid yang menggabungkan:
-
-#### 1. **🔤 Keyword Search**
-
-```python
-# Deteksi pola struktural UUD 1945
-patterns = [
-    r'pasal (\d+)',         # Pasal 1, Pasal 2, etc.
-    r'bab ([ivxlc]+)',      # Bab I, Bab II, etc.
-    r'ayat (\d+)',          # Ayat 1, Ayat 2, etc.
-    r'huruf ([a-z])',       # Huruf a, huruf b, etc.
-]
-```
-
-#### 2. **🧠 Semantic Search**
-
-```python
-# Vector similarity dengan FAISS
-query_embedding = embeddings_model.embed_query(question)
-semantic_results = vector_store.similarity_search(query_embedding, k=5)
-```
-
-#### 3. **🏆 Priority Weighting**
-
-```python
-# Source priority berdasarkan institusi
-priority_weights = {
-    'UUD1945-BUKU.pdf': 110,    # MPR Complete Guide
-    'UUD1945-MKRI.pdf': 100,    # Constitutional Court
-    'UUD1945-BPHN.pdf': 95,     # BPHN Official
-    'UUD1945-MPR.pdf': 90,      # MPR Standard
-    'UUD1945.pdf': 85           # DKPP Edition
-}
-```
-
-### 🎯 Context Validation System
-
-Sistem mengimplementasikan validasi konteks untuk memastikan pertanyaan relevan dengan UUD 1945:
-
-```python
-def _validate_uud_context(self, question: str) -> dict:
-    """Validasi apakah pertanyaan terkait UUD 1945"""
-
-    # Keywords UUD 1945
-    uud_keywords = [
-        'uud', 'undang-undang dasar', 'konstitusi', 'pancasila',
-        'negara', 'pemerintahan', 'hak asasi', 'kewajiban',
-        'mpr', 'dpr', 'dapd', 'presiden', 'mahkamah'
-    ]
-
-    # Structural terms
-    structural_terms = [
-        'pasal', 'bab', 'ayat', 'huruf', 'amandemen'
-    ]
-
-    # Legal concepts
-    legal_concepts = [
-        'hukum', 'peraturan', 'undang-undang', 'keputusan',
-        'ketetapan', 'yurisdiksi', 'kedaulatan'
-    ]
-```
-
-### 📈 Real-time Performance Monitoring
-
-```json
-{
-  "processing_metrics": {
-    "document_retrieval_time": "2.3s",
-    "context_building_time": "0.8s",
-    "llm_generation_time": "45.2s",
-    "metrics_calculation_time": "1.1s",
-    "total_processing_time": "49.4s"
-  },
-  "resource_usage": {
-    "memory_peak": "2.1GB",
-    "cpu_average": "65%",
-    "vector_search_operations": 5,
-    "tokens_processed": 2847
-  }
-}
-```
-
-### 🏗️ Custom Prompt Engineering
-
-Sistem menggunakan prompt engineering yang dioptimasi untuk konteks hukum Indonesia:
-
-```python
-prompt_template = """
-Kamu adalah ahli hukum konstitusi Indonesia yang sangat menguasai UUD 1945.
-
-INSTRUKSI KHUSUS:
-1. WAJIB gunakan HANYA informasi dari KONTEKS di bawah ini
-2. Untuk pertanyaan tentang pasal/bab: berikan bunyi lengkap + penjelasan
-3. Untuk pertanyaan wewenang/tugas: analisis komprehensif dari seluruh dokumen
-4. Berikan penjelasan SANGAT DETAIL dalam bahasa Indonesia formal
-5. Sertakan referensi pasal, ayat, bab yang spesifik
-6. Gabungkan informasi dari berbagai bagian untuk gambaran lengkap
-7. Gunakan struktur: Definisi → Penjelasan → Referensi → Implikasi
-
-KONTEKS LENGKAP UUD 1945:
-{context}
-
-PERTANYAAN: {question}
-
-ANALISIS MENDALAM:
-"""
-```
-
----
+- **🌐 API Layer**: FastAPI routes and request handling
+- **🧠 Service Layer**: RAG implementation and business logic  
+- **📊 Data Layer**: Vector stores and document processing
+- **🔧 Config Layer**: Settings and environment management
+- **🛠️ Utils Layer**: Logging, validation, and helpers
 
 ## 🔧 Troubleshooting
 
-```
+### ❗ Common Issues
 
-### 🔄 Dual Implementation Flow
+<details>
+<summary><strong>🔴 Ollama Connection Error</strong></summary>
 
-```
+**Problem**: `Connection refused to localhost:11434`
 
-📡 /api/v1/ask?method=langchain
-↓
-🎛️ lawchain_service.py
-↓
-🦜 lawchain_indonesia.py → 📊 LangChain FAISS → 🤖 Ollama → 📝 Response
-
-📡 /api/v1/ask?method=native
-↓
-🎛️ lawchain_service.py
-↓
-⚡ lawchain_native.py → 📊 Native FAISS → 🔍 Hybrid Search → 📈 8 Metrics
-
-````
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### 1. Ollama Connection Error
-
+**Solution**:
 ```bash
-# Error: Connection refused to localhost:11434
-# Solution: Start Ollama server
+# Start Ollama service
 ollama serve
 
-# Verify models are available
-ollama list
-````
+# Verify service is running
+curl http://localhost:11434/api/tags
+```
 
-#### 2. Model Not Found
+</details>
 
+<details>
+<summary><strong>🔴 Model Not Found</strong></summary>
+
+**Problem**: `Model 'gemma2:2b' not found`
+
+**Solution**:
 ```bash
-# Error: Model not found
-# Solution: Pull required models
+# Download the model
 ollama pull gemma2:2b
-ollama pull nomic-embed-text
+
+# Verify download
+ollama list
 ```
 
-#### 3. OpenMP Library Conflict
+</details>
 
+<details>
+<summary><strong>🔴 Memory Issues</strong></summary>
+
+**Problem**: `Out of memory` errors
+
+**Solution**:
 ```bash
-# Error: OMP: Error #15: Initializing libiomp5md.dll
-# Solution: Already handled in code with:
-# os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
+# Check available memory
+free -h  # Linux
+# Task Manager # Windows
+
+# Reduce chunk size in .env
+CHUNK_SIZE=400
+MAX_RETRIEVED_DOCS=3
 ```
 
-#### 4. Memory Issues
+</details>
 
+<details>
+<summary><strong>🔴 Vector Store Corruption</strong></summary>
+
+**Problem**: Cannot load vector store
+
+**Solution**:
 ```bash
-# Error: Out of memory
-# Solution:
-# 1. Increase system RAM
-# 2. Reduce chunk size in settings
-# 3. Use Gemma2:2b (current model - optimized for lower memory)
+# Remove corrupted store
+rm -rf storage/vector_store_faiss_optimized/
+
+# Restart server (will rebuild automatically)
+python main.py
 ```
 
-#### 5. Vector Store Corruption
+</details>
+
+### 📊 Performance Monitoring
 
 ```bash
-# Error: Cannot load vector store
-# Solution: Rebuild vector store
-curl -X POST "http://localhost:8000/api/v1/rebuild" \
-     -H "Content-Type: application/json" \
-     -d '{"force_rebuild": true}'
-```
+# Monitor system resources
+htop  # Linux/macOS
+# Task Manager  # Windows
 
-### Performance Optimization
-
-#### 1. First Time Setup (5-10 minutes)
-
-- Document loading: ~30 seconds
-- Embedding generation: ~3-7 minutes
-- Vector store building: ~1-2 minutes
-
-#### 2. Subsequent Startups (10-30 seconds)
-
-- Uses cached vector stores
-- Only validates Ollama connection
-
-#### 3. Query Processing
-
-- **LangChain**: ~45-60 seconds
-- **Native**: ~50-65 seconds
-- Time depends on question complexity
-
-### Monitoring & Logs
-
-#### Application Logs
-
-```bash
-# View real-time logs
-tail -f logs/app.log
-
-# Search for errors
-grep -i error logs/app.log
-```
-
-#### System Monitoring
-
-```bash
 # Check Ollama status
 curl http://localhost:11434/api/tags
 
-# Check API health
+# View application logs
+tail -f logs/lawchain.log
+
+# Monitor API health
 curl http://localhost:8000/api/v1/health
-
-# Monitor resource usage
-htop  # Linux/macOS
-# Task Manager (Windows)
 ```
 
-## 📈 Metrics Explanation
+### 🔍 Debug Mode
 
-### Quality Metrics (8 Metrics)
+Enable debug logging in `.env`:
 
-1. **Semantic Similarity** (0-100%): Kemiripan makna dengan dokumen sumber
-2. **Content Coverage** (0-100%): Cakupan konten relevan dalam jawaban
-3. **Answer Relevance** (0-100%): Relevansi jawaban dengan pertanyaan
-4. **Source Quality** (0-100%): Kualitas sumber berdasarkan priority score
-5. **Legal Context** (0-100%): Penggunaan terminologi dan konteks hukum
-6. **Answer Completeness** (0-100%): Kelengkapan dan struktur jawaban
-7. **Confidence Score** (0-100%): Skor kepercayaan weighted average
-8. **Estimated Accuracy** (0-97%): Estimasi akurasi final
+```env
+DEBUG=true
+LOG_LEVEL=DEBUG
+```
 
-### Accuracy Categories
+## 🤝 Contributing
 
-- **🟢 90%+**: SANGAT TINGGI - Dapat diandalkan
-- **🟡 80-89%**: TINGGI - Sedikit verifikasi
-- **🟠 70-79%**: SEDANG - Verifikasi lebih lanjut
-- **🔴 <70%**: RENDAH - Verifikasi menyeluruh
-
-## 🤝 Contributing & Development
-
-### 🚀 Contributing Guidelines
-
-Kami sangat menghargai kontribusi dari komunitas! Berikut cara berkontribusi:
-
-<table>
-<tr>
-<td width="50%">
-
-**🔧 Development Setup**
+### 🚀 Development Setup
 
 ```bash
-# 1. Fork repository
+# 1. Fork and clone
 git clone https://github.com/yourusername/LLM-LawChain.git
+cd LLM-LawChain
 
-# 2. Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# atau
-venv\Scripts\activate     # Windows
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Setup environment
-cp .env.example .env
-# Edit .env dengan konfigurasi Anda
-```
-
-</td>
-<td width="50%">
-
-**📋 Development Workflow**
-
-```bash
-# 1. Create feature branch
+# 2. Create development branch
 git checkout -b feature/amazing-feature
 
-# 2. Make changes & test
-python test_api.py
+# 3. Setup environment
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 
-# 3. Commit dengan conventional format
+# 4. Make changes and test
+python -m pytest tests/
+
+# 5. Commit and push
 git commit -m "feat: add amazing feature"
-
-# 4. Push & create PR
 git push origin feature/amazing-feature
 ```
 
-</td>
-</tr>
-</table>
+### 📋 Development Guidelines
+
+- **🧪 Testing**: Add tests for new features
+- **📚 Documentation**: Update README and docstrings
+- **🎨 Code Style**: Follow PEP 8 conventions
+- **🔍 Type Hints**: Use type annotations
+- **📝 Commit Messages**: Use conventional commits
 
 ### 🎯 Areas for Contribution
 
-- **🔍 Accuracy Improvements**: Enhance retrieval algorithms
-- **📊 Analytics**: Add more comprehensive metrics
-- **🌐 API Extensions**: New endpoints and features
-- **📚 Documentation**: Improve docs and examples
-- **🧪 Testing**: Expand test coverage
-- **🎨 UI/UX**: Frontend interface improvements
-- **🔧 Performance**: Optimization and scaling
-
-### 🏷️ Commit Convention
-
-```
-feat: ✨ new features
-fix: 🐛 bug fixes
-docs: 📚 documentation updates
-style: 💎 code style changes
-refactor: ♻️ code refactoring
-test: 🧪 testing improvements
-chore: 🔧 maintenance tasks
-```
+- 🔍 **Accuracy Improvements**: Enhance retrieval algorithms
+- ⚡ **Performance**: Optimize processing speed
+- 📊 **Analytics**: Add comprehensive metrics
+- 🌐 **API Features**: New endpoints and functionality
+- 📱 **Mobile Support**: Mobile-optimized responses
+- 🌍 **Internationalization**: Multi-language support
 
 ---
 
-## 📊 Performance Benchmarks
+## 📊 Performance Metrics
 
-### ⚡ Response Time Analysis
+### ⚡ Model Comparison
 
-<table>
-<tr>
-<th>Implementation</th>
-<th>🔍 Document Retrieval</th>
-<th>🤖 LLM Generation</th>
-<th>📊 Metrics Calculation</th>
-<th>⏱️ Total Time</th>
-</tr>
-<tr>
-<td><strong>🦜 LangChain RAG</strong></td>
-<td>2.1s ± 0.3s</td>
-<td>45.8s ± 5.2s</td>
-<td>1.8s ± 0.2s</td>
-<td><strong>49.7s ± 5.7s</strong></td>
-</tr>
-<tr>
-<td><strong>⚡ Native RAG</strong></td>
-<td>2.3s ± 0.4s</td>
-<td>48.1s ± 4.8s</td>
-<td>2.1s ± 0.3s</td>
-<td><strong>52.5s ± 5.5s</strong></td>
-</tr>
-</table>
+| Metric | Previous (LLaMA 3.1:8B) | Current (Gemma2:2b) | Improvement |
+|--------|-------------------------|---------------------|-------------|
+| **Model Size** | 4.9GB | 1.6GB | 🚀 67% reduction |
+| **Memory Usage** | 8GB+ | 4GB | 🚀 50% reduction |
+| **Processing Time** | 80-120s | 50-60s | 🚀 40% faster |
+| **Accuracy** | 75-85% | 80-95% | 🎯 Improved |
 
-### 📈 Quality Comparison
+### 📈 System Performance
 
-| Metric             | 🦜 LangChain | ⚡ Native | 🏆 Winner |
-| ------------------ | ------------ | --------- | --------- |
-| **Accuracy**       | 78.2%        | 84.6%     | ⚡ Native |
-| **Completeness**   | 82.1%        | 87.3%     | ⚡ Native |
-| **Legal Context**  | 75.8%        | 89.2%     | ⚡ Native |
-| **Source Quality** | 88.9%        | 91.4%     | ⚡ Native |
+```
+🔥 RESPONSE TIMES
+├── Health Check: < 0.1s
+├── System Info: < 0.5s
+├── Document Retrieval: ~2-3s
+├── LLM Generation: ~45-50s
+└── Total Processing: ~50-55s
 
----
-
-## 🔮 Future Roadmap
-
-### 🎯 Short Term (Q1 2025)
-
-- [ ] **🌍 Multi-language Support**: English interface
-- [ ] **📱 Mobile API**: Optimized mobile endpoints
-- [ ] **🔄 Auto-updates**: Real-time document synchronization
-- [ ] **📊 Advanced Analytics**: Usage statistics dashboard
-
-### � Medium Term (Q2-Q3 2025)
-
-- [ ] **🤖 Multi-LLM Support**: Support for multiple LLM providers
-- [ ] **🔍 Advanced Search**: Boolean and complex query support
-- [ ] **📚 Extended Legal Corpus**: Include other Indonesian laws
-- [ ] **🎨 Web Interface**: Complete frontend application
-
-### 🌟 Long Term (Q4 2025+)
-
-- [ ] **🧠 Fine-tuned Models**: Custom Indonesian legal LLM
-- [ ] **⚖️ Legal Reasoning**: Advanced legal case analysis
-- [ ] **🌐 API Marketplace**: Third-party integrations
-- [ ] **🏢 Enterprise Features**: Multi-tenant architecture
+🎯 ACCURACY METRICS
+├── Legal Context Recognition: 90%+
+├── Source Attribution: 95%+
+├── Answer Relevance: 85%+
+└── Overall Accuracy: 80-95%
+```
 
 ---
 
 ## 📄 License & Legal
 
-### 📋 License Information
+### 📜 License
 
-```
-MIT License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Copyright (c) 2025 LawChain Development Team
+### ⚖️ Legal Disclaimer
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+> ⚠️ **Important**: This system is an **informational tool** and does **NOT** replace professional legal consultation. All outputs should be verified with official legal sources and consultation with qualified legal professionals.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
+### 📚 Data Sources
 
-### ⚖️ Data Sources & Attribution
-
-- **UUD 1945 Documents**: Public domain materials from official Indonesian government institutions
-- **BPHN**: Badan Pembinaan Hukum Nasional
-- **MPR**: Majelis Permusyawaratan Rakyat Republik Indonesia
-- **MKRI**: Mahkamah Konstitusi Republik Indonesia
-- **DKPP**: Dewan Kehormatan Penyelenggara Pemilu
-
-### 🛡️ Disclaimer
-
-> ⚠️ **Legal Disclaimer**: Sistem ini adalah alat bantu informasi dan **TIDAK** menggantikan konsultasi hukum profesional. Semua output sistem harus diverifikasi dengan sumber hukum resmi dan konsultasi dengan ahli hukum yang kompeten.
+- **UUD 1945 Documents**: Official Indonesian government publications
+- **Legal Text Processing**: Based on publicly available constitutional documents
+- **AI Model**: Google Gemma2:2b under Apache 2.0 license
 
 ---
 
-## 🙋‍♂️ Support & Community
+## 📞 Support & Community
 
-### 💬 Community Channels
+### 💬 Getting Help
 
-<div align="center">
+- **🐛 Bug Reports**: [GitHub Issues](https://github.com/yourusername/LLM-LawChain/issues)
+- **💡 Feature Requests**: [GitHub Discussions](https://github.com/yourusername/LLM-LawChain/discussions)
+- **📚 Documentation**: [Project Wiki](https://github.com/yourusername/LLM-LawChain/wiki)
+- **📧 Email Support**: [support@lawchain.com](mailto:support@lawchain.com)
 
-| Platform             | Purpose                       | Link                                                                    |
-| -------------------- | ----------------------------- | ----------------------------------------------------------------------- |
-| 🐛 **GitHub Issues** | Bug reports, feature requests | [Issues](https://github.com/yourusername/LLM-LawChain/issues)           |
-| 📚 **Discussions**   | General questions, ideas      | [Discussions](https://github.com/yourusername/LLM-LawChain/discussions) |
-| 📖 **Wiki**          | Detailed documentation        | [Wiki](https://github.com/yourusername/LLM-LawChain/wiki)               |
-| 🔧 **API Docs**      | Interactive API documentation | `http://localhost:8000/docs`                                            |
+### 🌟 Acknowledgments
 
-</div>
-
-### 📧 Contact Information
-
-- **Project Maintainer**: [Your Name](mailto:your.email@example.com)
-- **Technical Issues**: Create GitHub issue
-- **Business Inquiries**: [business@lawchain.com](mailto:business@lawchain.com)
-- **Security Reports**: [security@lawchain.com](mailto:security@lawchain.com)
-
-### 🎓 Educational Use
-
-Sistem ini dikembangkan untuk tujuan **pendidikan dan penelitian**. Sangat cocok untuk:
-
-- 📚 **Students**: Pembelajaran hukum konstitusi Indonesia
-- 🎓 **Researchers**: Analisis teks hukum dan RAG systems
-- 👨‍💼 **Developers**: Referensi implementasi RAG architecture
-- 🏛️ **Legal Tech**: Foundation untuk legal AI applications
+- **Google AI**: For the Gemma2:2b model
+- **Ollama Team**: For local LLM deployment
+- **LangChain**: For RAG framework
+- **FastAPI**: For modern API framework
+- **Indonesian Government**: For public constitutional documents
 
 ---
 
 <div align="center">
 
-## 🏛️ LawChain Backend API
+## 🏛️ Made with ❤️ for Indonesian Legal System
 
-**Making Indonesian Constitutional Law Accessible Through AI**
+**LawChain Backend API** - Democratizing access to constitutional knowledge through AI
 
----
-
-[![Built with ❤️](https://img.shields.io/badge/Built%20with-❤️-red.svg)](https://github.com/yourusername/LLM-LawChain)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-009688.svg)](https://fastapi.tiangolo.com/)
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://python.org/)
-[![Ollama](https://img.shields.io/badge/Ollama-Gemma2:2b-orange.svg)](https://ollama.ai/)
-[![FAISS](https://img.shields.io/badge/FAISS-Vector%20Search-green.svg)](https://faiss.ai/)
-
-### 🌟 "Democratizing Legal Information Access Through Technology"
-
-_Empowering citizens, students, and legal professionals with instant access to Indonesian constitutional knowledge through advanced AI technology._
+[![Built with Python](https://img.shields.io/badge/Built%20with-Python-blue.svg)](https://python.org/)
+[![Powered by Gemma2](https://img.shields.io/badge/Powered%20by-Gemma2-orange.svg)](https://ai.google.dev/gemma)
+[![Optimized for Indonesia](https://img.shields.io/badge/Optimized%20for-Indonesia-red.svg)](https://indonesia.go.id/)
 
 ---
 
-**📊 Stats**: 2 RAG Implementations • 8 Quality Metrics • 5 Official UUD Sources • 494+ Vector Embeddings
+**🚀 Ready to explore Indonesian constitutional law with AI?**
 
-**🚀 Made in Indonesia** 🇮🇩 **for Indonesian Legal System**
-
----
+[Get Started](#-quick-start) • [Documentation](#-api-documentation) • [Contribute](#-contributing)
 
 </div>
