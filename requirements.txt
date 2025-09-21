@@ -49,12 +49,13 @@ aiohttp==3.11.10
 typing-extensions==4.14.1
 tqdm==4.66.4
 python-multipart==0.0.12
-hashlib3==2.1.0
 
 # ===== ASYNC & CONCURRENCY =====
 # Async programming support
 asyncio-mqtt==0.16.2
-async-timeout==5.0.1
+async-timeout==4.0.3
+
+
 
 # ===== LOGGING & MONITORING =====
 # Advanced logging dan error tracking
