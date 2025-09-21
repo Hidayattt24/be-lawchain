@@ -42,7 +42,7 @@ async def lifespan(app: FastAPI):
         logger.info("- LangChain: LangChain framework dengan custom retriever")
         logger.info("- Native: Pure Python implementation tanpa LangChain")
         logger.info("Vector Store: Menggunakan vector_store_structured dengan hard filtering")
-        logger.info("Services ready for lazy initialization pada first request")
+        logger.info("Services ready for lazy initialization pada first requeollst")
     except Exception as e:
         logger.warning(f"Service info logging failed: {str(e)}")
         logger.info("Services will be initialized on first request")

@@ -29,7 +29,7 @@ sentence-transformers==3.2.1
 # ===== SCIENTIFIC COMPUTING =====
 # Library untuk numerical operations dan data processing
 numpy==2.1.3
-scipy==1.14.1
+scipy==1.14.1ollama pull gemma2:2b
 
 # ===== WEB FRAMEWORK & API =====
 # FastAPI backend dengan middleware dan validasi
